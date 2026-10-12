@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- html2canvas para generar imágenes PNG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         body { font-family: 'Outfit', sans-serif; }
@@ -59,7 +61,7 @@
             <i class="fa-solid fa-lightbulb text-amber-600 text-xl mt-0.5"></i>
             <div class="text-xs space-y-1">
                 <p class="font-bold">¿Cómo usar la pantalla?</p>
-                <p class="text-amber-800 leading-relaxed">Ingresá los datos del vehículo. Escribí el kilometraje y tocá la <strong>varita mágica (🪄)</strong> para ver los mantenimientos o fallas comunes sugeridas. Tocá <strong>"Guardar Ficha"</strong> para guardarlo en el teléfono.</p>
+                <p class="text-amber-800 leading-relaxed">Guardá la ficha para agregarla al historial. En cada ficha del historial podés tocar <strong>"Ver Ficha"</strong> para editar datos, imprimir o guardar una <strong>Imagen B/N</strong> en el celular.</p>
             </div>
         </div>
 
@@ -70,7 +72,7 @@
                     <h2 class="font-extrabold text-lg text-slate-900">Nueva Ficha de Entrada</h2>
                     <p class="text-xs text-slate-500">Ingresá los datos del auto o moto que entra al taller</p>
                 </div>
-                <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200">Paso 1 de 2</span>
+                <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200">Ingreso</span>
             </div>
 
             <form id="job-form" onsubmit="app.handleFormSubmit(event)" class="space-y-4">
@@ -109,9 +111,7 @@
                         </span>
                         <button type="button" onclick="app.closeKmSuggestions()" class="text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <div id="km-suggestions-content" class="text-xs leading-relaxed text-slate-300 space-y-1">
-                        <!-- Generado por JS -->
-                    </div>
+                    <div id="km-suggestions-content" class="text-xs leading-relaxed text-slate-300 space-y-1"></div>
                     <button type="button" onclick="app.applySuggestionsToJob()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition">
                         Copiar mantenimientos al detalle de la ficha
                     </button>
@@ -140,7 +140,7 @@
                 <div class="pt-2">
                     <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-2xl transition shadow-md flex items-center justify-center space-x-2 text-sm">
                         <i class="fa-solid fa-floppy-disk text-amber-500"></i>
-                        <span>Guardar y Generar Ficha</span>
+                        <span>Guardar Ficha en el Historial</span>
                     </button>
                 </div>
             </form>
@@ -154,15 +154,86 @@
             </div>
 
             <div id="jobs-list" class="space-y-3">
-                <!-- Se llena con JS -->
+                <!-- Se llena dinámicamente -->
             </div>
         </section>
     </main>
 
-    <!-- ÁREA DE IMPRESIÓN (Plantilla limpia B/N) -->
-    <div id="print-area" class="hidden">
-        <!-- Renderizado dinámico para imprimir -->
+    <!-- Modal para VER / EDITAR FICHA COMPLETA -->
+    <div id="view-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 space-y-4 shadow-2xl border border-slate-200 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-900 text-base flex items-center space-x-2">
+                    <i class="fa-solid fa-file-invoice text-amber-500"></i>
+                    <span>Detalle de Ficha</span>
+                </h3>
+                <button onclick="app.closeViewModal()" class="text-slate-400 hover:text-slate-900 font-bold p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <form id="edit-job-form" onsubmit="app.handleEditSubmit(event)" class="space-y-3">
+                <input type="hidden" id="edit-job-id">
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase mb-1">Cliente</label>
+                        <input type="text" id="edit-client-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:border-slate-800 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase mb-1">Teléfono</label>
+                        <input type="tel" id="edit-client-phone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:border-slate-800 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase mb-1">Vehículo / Modelo</label>
+                        <input type="text" id="edit-vehicle-model" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:border-slate-800 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase mb-1">Kilometraje</label>
+                        <input type="number" id="edit-vehicle-km" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:border-slate-800 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-600 uppercase mb-1">Trabajo Realizado / Falla</label>
+                    <textarea id="edit-job-details" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:border-slate-800 outline-none"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase mb-1">Presupuesto ($U)</label>
+                        <input type="number" id="edit-job-price" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:border-slate-800 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase mb-1">Estado</label>
+                        <select id="edit-job-status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:border-slate-800 outline-none">
+                            <option value="En Espera">En Espera</option>
+                            <option value="En Reparación">En Reparación</option>
+                            <option value="Terminado">Terminado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex flex-col sm:flex-row gap-2">
+                    <button type="submit" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Guardar Cambios</span>
+                    </button>
+                    <button type="button" onclick="app.downloadImageFromModal()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-file-image text-amber-400"></i>
+                        <span>Generar Imagen B/N</span>
+                    </button>
+                    <button type="button" onclick="app.printFromModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3 py-2.5 rounded-xl text-xs transition flex items-center justify-center">
+                        <i class="fa-solid fa-print"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+
+    <!-- ÁREA OCULTA / PLANTILLA PARA IMPRESIÓN Y GENERAR IMAGEN EN B/N -->
+    <div id="print-area" class="hidden"></div>
 
     <!-- Modal Instrucciones -->
     <div id="help-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
@@ -173,9 +244,9 @@
             </div>
             
             <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
-                <p><strong>1. Guardar ficha:</strong> Llená los campos del cliente y vehículo. Al apretar "Guardar y Generar Ficha" se guarda solo en el teléfono.</p>
-                <p><strong>2. Varita Mágica de Kilometraje (🪄):</strong> Poné los km del auto o moto y tocá el botón de la varita. Te dirá qué mantenimientos o revisiones le corresponden por kilometraje.</p>
-                <p><strong>3. Imprimir sin gastar tinta:</strong> Tocá el botón "Imprimir B/N" en cualquier trabajo de la lista para sacar el comprobante impreso en blanco y negro.</p>
+                <p><strong>1. Guardar ficha:</strong> Llená los datos y apretá "Guardar Ficha en el Historial".</p>
+                <p><strong>2. Ver y Editar:</strong> En la lista de abajo, tocá <strong>"Ver Ficha"</strong> para modificar cualquier dato o ver el trabajo completo.</p>
+                <p><strong>3. Generar Imagen B/N:</strong> Al presionar "Generar Imagen B/N", el teléfono guardará automáticamente la ficha en formato de foto para enviarla por WhatsApp o guardarla.</p>
             </div>
 
             <button onclick="app.closeHelpModal()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs">Entendido</button>
@@ -300,11 +371,8 @@
                 this.saveJobs();
                 this.renderJobsList();
 
-                // Limpiar formulario
                 document.getElementById('job-form').reset();
                 this.closeKmSuggestions();
-
-                // Cerrar teclado y acomodar pantalla
                 this.resetMobileView();
             }
 
@@ -343,16 +411,19 @@
                             <div class="flex items-center space-x-2">
                                 <h3 class="font-bold text-sm text-slate-900">${j.vehicleModel} — <span class="text-slate-600 font-semibold">${j.clientName}</span></h3>
                             </div>
-                            <p class="text-xs text-slate-600 line-clamp-2"><strong>Trabajo:</strong> ${j.jobDetails}</p>
-                            <p class="text-[11px] text-slate-400">Fecha: ${j.date} ${j.vehicleKm ? `• Km: ${j.vehicleKm}` : ''} • Tel: ${j.clientPhone || 'N/A'} ${j.jobPrice ? `• $U${j.jobPrice}` : ''}</p>
+                            <p class="text-xs text-slate-600 line-clamp-1"><strong>Trabajo:</strong> ${j.jobDetails}</p>
+                            <p class="text-[11px] text-slate-400">Fecha: ${j.date} ${j.vehicleKm ? `• Km: ${j.vehicleKm}` : ''} • Estado: <strong class="text-slate-700">${j.jobStatus}</strong></p>
                         </div>
 
                         <div class="flex items-center space-x-2 shrink-0">
-                            <button onclick="app.printJob('${j.id}')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3 py-2 rounded-xl transition shadow-sm flex items-center space-x-1.5">
-                                <i class="fa-solid fa-print text-amber-400"></i>
-                                <span>Imprimir B/N</span>
+                            <button onclick="app.openViewModal('${j.id}')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs px-3 py-2 rounded-xl transition shadow-sm flex items-center space-x-1.5">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>Ver Ficha</span>
                             </button>
-                            <button onclick="app.deleteJob('${j.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs p-2 rounded-xl transition">
+                            <button onclick="app.generateImage('${j.id}')" title="Descargar foto B/N" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs p-2.5 rounded-xl transition shadow-sm">
+                                <i class="fa-solid fa-file-image text-amber-400"></i>
+                            </button>
+                            <button onclick="app.deleteJob('${j.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs p-2.5 rounded-xl transition">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -360,55 +431,122 @@
                 `).join('');
             }
 
-            printJob(id) {
+            openViewModal(id) {
                 this.resetMobileView();
-
                 const job = this.jobs.find(j => j.id === id);
                 if (!job) return;
 
-                const printArea = document.getElementById('print-area');
-                
-                // Formato de Ficha en Blanco y Negro estricto
-                printArea.innerHTML = `
-                    <div style="font-family: Arial, sans-serif; padding: 20px; color: #000; background: #fff; max-width: 800px; margin: 0 auto; border: 2px solid #000;">
+                document.getElementById('edit-job-id').value = job.id;
+                document.getElementById('edit-client-name').value = job.clientName || '';
+                document.getElementById('edit-client-phone').value = job.clientPhone || '';
+                document.getElementById('edit-vehicle-model').value = job.vehicleModel || '';
+                document.getElementById('edit-vehicle-km').value = job.vehicleKm || '';
+                document.getElementById('edit-job-details').value = job.jobDetails || '';
+                document.getElementById('edit-job-price').value = job.jobPrice || '';
+                document.getElementById('edit-job-status').value = job.jobStatus || 'En Espera';
+
+                document.getElementById('view-modal').classList.remove('hidden');
+            }
+
+            closeViewModal() {
+                document.getElementById('view-modal').classList.add('hidden');
+                this.resetMobileView();
+            }
+
+            handleEditSubmit(e) {
+                e.preventDefault();
+                const id = document.getElementById('edit-job-id').value;
+                const index = this.jobs.findIndex(j => j.id === id);
+                if (index === -1) return;
+
+                this.jobs[index].clientName = document.getElementById('edit-client-name').value.trim();
+                this.jobs[index].clientPhone = document.getElementById('edit-client-phone').value.trim();
+                this.jobs[index].vehicleModel = document.getElementById('edit-vehicle-model').value.trim();
+                this.jobs[index].vehicleKm = document.getElementById('edit-vehicle-km').value.trim();
+                this.jobs[index].jobDetails = document.getElementById('edit-job-details').value.trim();
+                this.jobs[index].jobPrice = document.getElementById('edit-job-price').value.trim();
+                this.jobs[index].jobStatus = document.getElementById('edit-job-status').value;
+
+                this.saveJobs();
+                this.renderJobsList();
+                this.closeViewModal();
+            }
+
+            buildPrintTemplateHTML(job) {
+                return `
+                    <div id="bn-card-content" style="font-family: Arial, sans-serif; padding: 25px; color: #000; background: #fff; width: 650px; margin: 0 auto; border: 3px solid #000;">
                         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
-                            <h1 style="font-size: 22px; font-weight: bold; margin: 0; text-transform: uppercase;">TALLER EL YAMA</h1>
+                            <h1 style="font-size: 24px; font-weight: bold; margin: 0; text-transform: uppercase;">TALLER EL YAMA</h1>
                             <p style="font-size: 12px; margin: 3px 0 0 0;">Servicio Mecánico y Mantenimiento de Vehículos</p>
-                            <p style="font-size: 10px; margin: 2px 0 0 0;">Fecha de emisión: ${job.date}</p>
+                            <p style="font-size: 10px; margin: 2px 0 0 0;">Fecha: ${job.date}</p>
                         </div>
 
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px;">
                             <tr>
-                                <td style="padding: 5px; border: 1px solid #000; width: 50%;"><strong>CLIENTE:</strong> ${job.clientName}</td>
-                                <td style="padding: 5px; border: 1px solid #000; width: 50%;"><strong>TELÉFONO:</strong> ${job.clientPhone || '---------'}</td>
+                                <td style="padding: 6px; border: 1px solid #000; width: 50%;"><strong>CLIENTE:</strong> ${job.clientName}</td>
+                                <td style="padding: 6px; border: 1px solid #000; width: 50%;"><strong>TELÉFONO:</strong> ${job.clientPhone || '---------'}</td>
                             </tr>
                             <tr>
-                                <td style="padding: 5px; border: 1px solid #000;"><strong>VEHÍCULO / MODELO:</strong> ${job.vehicleModel}</td>
-                                <td style="padding: 5px; border: 1px solid #000;"><strong>KILOMETRAJE:</strong> ${job.vehicleKm ? job.vehicleKm + ' km' : '---------'}</td>
+                                <td style="padding: 6px; border: 1px solid #000;"><strong>VEHÍCULO / MODELO:</strong> ${job.vehicleModel}</td>
+                                <td style="padding: 6px; border: 1px solid #000;"><strong>KILOMETRAJE:</strong> ${job.vehicleKm ? job.vehicleKm + ' km' : '---------'}</td>
                             </tr>
                             <tr>
-                                <td style="padding: 5px; border: 1px solid #000;" colspan="2"><strong>ESTADO DEL TRABAJO:</strong> ${job.jobStatus}</td>
+                                <td style="padding: 6px; border: 1px solid #000;" colspan="2"><strong>ESTADO DEL TRABAJO:</strong> ${job.jobStatus}</td>
                             </tr>
                         </table>
 
-                        <div style="border: 1px solid #000; padding: 10px; margin-bottom: 15px; font-size: 12px; min-height: 100px;">
+                        <div style="border: 1px solid #000; padding: 12px; margin-bottom: 15px; font-size: 12px; min-height: 120px;">
                             <strong>DETALLE DEL TRABAJO / REPARACIÓN:</strong>
-                            <p style="margin-top: 8px; white-space: pre-wrap;">${job.jobDetails}</p>
+                            <p style="margin-top: 8px; white-space: pre-wrap; font-size: 12px;">${job.jobDetails}</p>
                         </div>
 
-                        <div style="text-align: right; font-size: 14px; font-weight: bold; margin-bottom: 30px;">
+                        <div style="text-align: right; font-size: 15px; font-weight: bold; margin-bottom: 25px;">
                             PRESUPUESTO ESTIMADO: $U ${job.jobPrice || '_________'}
                         </div>
 
-                        <div style="margin-top: 50px; display: flex; justify-between; text-align: center; font-size: 11px;">
+                        <div style="margin-top: 40px; display: flex; justify-content: space-between; text-align: center; font-size: 11px;">
                             <div style="width: 40%; border-top: 1px solid #000; padding-top: 5px;">Firma / Conformidad Cliente</div>
                             <div style="width: 40%; border-top: 1px solid #000; padding-top: 5px;">Taller El Yama</div>
                         </div>
                     </div>
                 `;
+            }
 
+            generateImage(id) {
+                this.resetMobileView();
+                const job = this.jobs.find(j => j.id === id);
+                if (!job) return;
+
+                const printArea = document.getElementById('print-area');
+                printArea.innerHTML = this.buildPrintTemplateHTML(job);
                 printArea.classList.remove('hidden');
-                
+
+                const targetEl = document.getElementById('bn-card-content');
+                html2canvas(targetEl, { scale: 2 }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `Ficha_Taller_El_Yama_${job.clientName.replace(/\s+/g, '_')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    printArea.classList.add('hidden');
+                });
+            }
+
+            downloadImageFromModal() {
+                const id = document.getElementById('edit-job-id').value;
+                this.closeViewModal();
+                this.generateImage(id);
+            }
+
+            printFromModal() {
+                const id = document.getElementById('edit-job-id').value;
+                const job = this.jobs.find(j => j.id === id);
+                if (!job) return;
+
+                const printArea = document.getElementById('print-area');
+                printArea.innerHTML = this.buildPrintTemplateHTML(job);
+                printArea.classList.remove('hidden');
+
                 setTimeout(() => {
                     window.print();
                     printArea.classList.add('hidden');
