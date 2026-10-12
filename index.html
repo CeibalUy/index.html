@@ -1,516 +1,338 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Monitor</title>
-
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-
-  <style>
-    :root {
-      --bg-color: #0d1117;
-      --card-bg: #161b22;
-      --accent-green: #238636;
-      --accent-red: #da3633;
-      --accent-blue: #1f6beb;
-      --accent-yellow: #d29922;
-      --text-color: #f0f6fc;
-      --subtext-color: #8b949e;
-      --border-color: #30363d;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 12px; overflow-x: hidden; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gestión de Taller - Taller El Yama</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     
-    #errorBanner { display: none; background-color: var(--accent-red); color: white; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; font-size: 0.85rem; width: 100%; max-width: 1000px; margin-bottom: 10px;}
-
-    /* LAYOUT INTELIGENTE (ADAPTABLE A HORIZONTAL Y VERTICAL) */
-    .app-layout { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 600px; }
-    .camera-container { width: 100%; }
-    .controls-container { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-
-    @media (orientation: landscape) {
-      .app-layout { flex-direction: row; max-width: 1200px; height: calc(100vh - 24px); }
-      .camera-container { flex: 2; height: 100%; display: flex; align-items: center; justify-content: center; }
-      .controls-container { flex: 1; height: 100%; overflow-y: auto; padding-right: 5px; }
-    }
-
-    /* CÁMARA */
-    .camera-box { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #000; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
-    video { width: 100%; height: 100%; object-fit: cover; }
-
-    .overlay-badge { position: absolute; background-color: rgba(0, 0, 0, 0.75); padding: 4px 10px; border-radius: 16px; font-size: 0.75rem; font-weight: bold; border: 1px solid var(--border-color); z-index: 10; display: flex; align-items: center; gap: 6px; }
-    .rec-indicator { top: 12px; left: 12px; visibility: hidden; }
-    .rec-indicator.visible { visibility: visible; }
-    
-    .dot { width: 8px; height: 8px; border-radius: 50%; background-color: #8b949e; }
-    .recording .dot { background-color: var(--accent-red); animation: blink 1s infinite; }
-    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-    
-    .cam-switch-btn { position: absolute; top: 12px; right: 12px; background-color: rgba(0, 0, 0, 0.75); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; z-index: 10; }
-
-    /* TARJETAS Y BOTONES */
-    .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-    label { font-size: 0.75rem; color: var(--subtext-color); font-weight: 700; text-transform: uppercase; }
-    
-    .action-buttons { display: flex; gap: 10px; }
-    button.btn { flex: 1; padding: 14px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase; transition: opacity 0.2s; }
-    button.btn:active { opacity: 0.7; }
-    button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-record { background-color: var(--accent-green); color: #fff; }
-    .btn-stop { background-color: var(--accent-red); color: #fff; display: none; }
-    
-    /* CONEXIÓN / LINK */
-    .qr-row { display: flex; gap: 12px; align-items: center; width: 100%; }
-    .link-controls { display: flex; flex-direction: column; gap: 8px; flex: 1; overflow: hidden; }
-    input[type="text"] { padding: 10px; font-size: 0.85rem; width: 100%; background: var(--bg-color); color: white; border: 1px solid var(--border-color); border-radius: 6px; outline: none; }
-    .btn-sm { padding: 10px 8px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer; color: #fff; text-align: center; display: flex; justify-content: center; align-items: center; flex: 1; }
-
-    /* LISTA DE VIDEOS GRABADOS */
-    .clip-list { display: flex; flex-direction: column; gap: 12px; }
-    .clip-item { background-color: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; }
-    .clip-header { font-size: 0.95rem; font-weight: bold; color: var(--text-color); display: flex; align-items: center; gap: 8px; }
-    .clip-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-    .clip-btn { flex: 1; min-width: 30%; padding: 10px 8px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; color: #fff; display: flex; justify-content: center; align-items: center; gap: 4px; }
-    .btn-preview { background-color: #30363d; }
-    .btn-download { background-color: var(--accent-blue); }
-    .btn-upload { background-color: #8957e5; }
-    .btn-whatsapp { background-color: #25D366; }
-
-    /* MODAL DE PREVISUALIZACIÓN */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; justify-content: center; align-items: center; padding: 12px; }
-    .modal-content { width: 100%; max-width: 800px; background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); display: flex; flex-direction: column; }
-    .modal-header { padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
-    .modal-close { background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-    .modal-body video { width: 100%; max-height: 70vh; background: #000; }
-
-  </style>
+    <style>
+        body { font-family: 'Outfit', sans-serif; }
+        
+        /* Estilos estrictos para Impresión B/N de Alto Contraste */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                color: #000 !important; 
+                background: #fff !important; 
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
 </head>
-<body>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col selection:bg-slate-800 selection:text-white">
 
-  <div id="errorBanner">
-    ⚠️ ATENCIÓN: Conéctate mediante HTTPS para activar la cámara.
-  </div>
-
-  <!-- MODAL DE PREVIEW -->
-  <div id="previewModal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <label>Previsualización</label>
-        <button class="modal-close" onclick="closePreview()">✖</button>
-      </div>
-      <div class="modal-body">
-        <video id="previewPlayer" controls playsinline></video>
-      </div>
-    </div>
-  </div>
-
-  <!-- APLICACIÓN PRINCIPAL -->
-  <div id="recorder-app" class="app-layout">
-    
-    <div class="camera-container">
-      <div class="camera-box">
-        <video id="preview" autoplay playsinline muted></video>
-        
-        <div class="overlay-badge rec-indicator visible" id="recIndicator">
-          <div class="dot"></div>
-          <span id="timerDisplay" style="font-family: monospace;">00:00:00</span>
-        </div>
-
-        <button class="cam-switch-btn" id="switchCamBtn">🔄 Girar</button>
-      </div>
-    </div>
-
-    <div class="controls-container">
-      <div class="card">
-        <div class="action-buttons">
-          <button class="btn btn-record" id="recordBtn">🔴 GRABAR</button>
-          <button class="btn btn-stop" id="stopBtn">⏹ DETENER</button>
-        </div>
-      </div>
-
-      <div class="card" id="outputCard" style="display: none;">
-        <label>✅ ARCHIVOS GUARDADOS</label>
-        <div id="clipsList" class="clip-list"></div>
-      </div>
-
-      <div class="card">
-        <label>📡 LINK DEL MONITOR REMOTO (OPCIONAL)</label>
-        <div class="qr-row">
-          <div class="link-controls">
-            <input type="text" id="monitorLinkInput" readonly>
-            <button class="btn-sm" id="copyMonitorBtn" style="background: var(--border-color);">Copiar Link</button>
-          </div>
-        </div>
-        <div id="peerStatus" style="font-size: 0.75rem; color: var(--accent-yellow); text-align: center; margin-top: 5px;">
-          Iniciando red de monitor...
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- MODO VISOR REMOTO -->
-  <div id="viewer-app" class="app-layout" style="display: none; max-width: 800px;">
-    <div class="controls-container">
-      <div class="card" style="text-align: center; border-color: var(--accent-yellow);">
-        <label id="viewerStatus" style="color: var(--accent-yellow);">Conectando... 🟡</label>
-      </div>
-    </div>
-    <div class="camera-container">
-      <div class="camera-box">
-        <video id="viewerVideo" autoplay playsinline muted></video>
-        <div class="overlay-badge rec-indicator" id="vRecIndicator" style="top: 12px; left: 12px;">
-          <div class="dot"></div>
-          <span style="font-family: monospace;">GRABANDO</span>
-        </div>
-      </div>
-    </div>
-    <div class="controls-container">
-      <div class="card">
-        <div class="action-buttons">
-          <button class="btn btn-record" id="vRecordBtn" disabled>🔴 GRABAR</button>
-          <button class="btn btn-stop" id="vStopBtn">⏹ DETENER</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    if (window.location.protocol === 'file:' || (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')) {
-      document.getElementById('errorBanner').style.display = 'block';
-    }
-
-    async function forceLandscapeScreen() {
-      try {
-        if (screen.orientation && screen.orientation.lock) {
-          await screen.orientation.lock('landscape');
-        }
-      } catch (e) {}
-    }
-    document.addEventListener('click', forceLandscapeScreen, { once: true });
-
-    const peerConfig = {
-      config: { iceServers: [ { urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478' } ] }
-    };
-
-    function closePreview() {
-      const modal = document.getElementById('previewModal');
-      const player = document.getElementById('previewPlayer');
-      player.pause();
-      player.src = "";
-      modal.style.display = 'none';
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const hostPeerId = urlParams.get('view');
-
-    if (hostPeerId) {
-      document.getElementById('recorder-app').style.display = 'none';
-      document.getElementById('viewer-app').style.display = 'flex';
-      initViewerMode(hostPeerId);
-    } else {
-      initRecorderMode();
-    }
-
-    // ========================================================
-    // GRABADOR PRINCIPAL
-    // ========================================================
-    function initRecorderMode() {
-      let currentStream = null;
-      let peer = null;
-      let activeConnections = new Map();
-      let isRecording = false;
-      let matchClips = [];
-      let facingMode = 'environment';
-      let wakeLock = null;
-
-      const preview = document.getElementById('preview');
-      const peerStatus = document.getElementById('peerStatus');
-
-      async function solicitarWakeLock() {
-        try {
-          if ('wakeLock' in navigator) {
-            wakeLock = await navigator.wakeLock.request('screen');
-          }
-        } catch (err) {}
-      }
-      function liberarWakeLock() {
-        if (wakeLock !== null) { wakeLock.release().then(() => wakeLock = null); }
-      }
-
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-          if (isRecording) solicitarWakeLock();
-        } else {
-          if (isRecording) {
-            document.getElementById('stopBtn').click();
-            alert("⚠️ Se detectó que saliste de la página o bloqueaste la pantalla. La grabación fue detenida y guardada por seguridad.");
-          }
-        }
-      });
-
-      const myUniqueId = 'cam-' + Math.random().toString(36).substring(2, 9);
-      const generatedViewerUrl = window.location.origin + window.location.pathname + '?view=' + myUniqueId;
-      document.getElementById('monitorLinkInput').value = generatedViewerUrl;
-      
-      document.getElementById('copyMonitorBtn').addEventListener('click', () => {
-        navigator.clipboard.writeText(generatedViewerUrl).then(() => {
-          document.getElementById('copyMonitorBtn').innerText = "¡Copiado!";
-          setTimeout(() => { document.getElementById('copyMonitorBtn').innerText = "Copiar Link"; }, 2000);
-        });
-      });
-
-      peer = new Peer(myUniqueId, peerConfig); 
-      peer.on('open', () => { peerStatus.innerText = "Monitor remoto listo para conectar."; });
-      peer.on('disconnected', () => peer.reconnect());
-      
-      peer.on('connection', (conn) => {
-        conn.on('open', () => {
-          activeConnections.set(conn.peer, conn);
-          peerStatus.innerText = "👁️ Monitor visualizando";
-          conn.send({ type: 'STATE', isRecording: isRecording });
-        });
-        conn.on('data', (data) => {
-          if (data.type === 'VIEWER_READY' && currentStream) peer.call(conn.peer, currentStream);
-          else if (data.type === 'CMD_START_REC') document.getElementById('recordBtn').click();
-          else if (data.type === 'CMD_STOP_REC') document.getElementById('stopBtn').click();
-        });
-        conn.on('close', () => activeConnections.delete(conn.peer));
-      });
-
-      function broadcastState() {
-        activeConnections.forEach(conn => { if(conn.open) conn.send({ type: 'STATE', isRecording: isRecording }); });
-      }
-
-      async function startCamera() {
-        if (currentStream) currentStream.getTracks().forEach(t => t.stop());
-        try {
-          let constraints = { 
-            video: { 
-              facingMode: { ideal: facingMode }, 
-              width: { ideal: 1920 }, 
-              height: { ideal: 1080 },
-              aspectRatio: { exact: 16/9 }
-            }, 
-            audio: false 
-          };
-          
-          try {
-            currentStream = await navigator.mediaDevices.getUserMedia(constraints);
-          } catch(e) {
-            constraints.video.aspectRatio = { ideal: 16/9 };
-            currentStream = await navigator.mediaDevices.getUserMedia(constraints);
-          }
-          
-          preview.srcObject = currentStream;
-          activeConnections.forEach((conn, peerId) => peer.call(peerId, currentStream));
-        } catch (err) {
-          alert("Error de cámara. Asegúrate de dar permisos.");
-        }
-      }
-      startCamera();
-
-      document.getElementById('switchCamBtn').addEventListener('click', () => {
-        facingMode = facingMode === 'environment' ? 'user' : 'environment';
-        startCamera();
-      });
-
-      let mediaRecorder, recordedChunks = [], startTime, timerInterval; 
-      const recordBtn = document.getElementById('recordBtn'); 
-      const stopBtn = document.getElementById('stopBtn');
-      
-      recordBtn.addEventListener('click', () => {
-        if(!currentStream) return;
-        
-        forceLandscapeScreen();
-        solicitarWakeLock();
-        
-        recordedChunks = [];
-        let options = { mimeType: MediaRecorder.isTypeSupported('video/mp4;codecs=avc1') ? 'video/mp4;codecs=avc1' : 'video/webm' };
-        try { mediaRecorder = new MediaRecorder(currentStream, options); } 
-        catch (e) { mediaRecorder = new MediaRecorder(currentStream); }
-
-        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-        
-        mediaRecorder.onstop = () => {
-          const finalExt = mediaRecorder.mimeType.includes('mp4') ? 'mp4' : 'webm';
-          const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'video/mp4' });
-          const clipIndex = matchClips.length + 1; 
-          const fileName = `Video_${clipIndex}.${finalExt}`;
-
-          matchClips.push({ blob, fileName });
-          renderClipItem(blob, fileName, clipIndex);
-        };
-
-        mediaRecorder.start(1000); 
-        isRecording = true;
-        recordBtn.style.display = 'none'; stopBtn.style.display = 'flex';
-        document.getElementById('recIndicator').classList.add('recording');
-        
-        startTime = Date.now();
-        timerInterval = setInterval(() => {
-          const elapsed = Math.floor((Date.now() - startTime) / 1000);
-          document.getElementById('timerDisplay').innerText = new Date(elapsed * 1000).toISOString().substr(11, 8);
-        }, 1000);
-
-        broadcastState(); 
-      });
-
-      stopBtn.addEventListener('click', () => {
-        if(mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-        liberarWakeLock();
-        isRecording = false;
-        recordBtn.style.display = 'flex'; stopBtn.style.display = 'none';
-        document.getElementById('recIndicator').classList.remove('recording');
-        clearInterval(timerInterval);
-        broadcastState(); 
-      });
-
-      function renderClipItem(blob, fileName, index) {
-        document.getElementById('outputCard').style.display = 'flex';
-        const clipsList = document.getElementById('clipsList');
-        
-        const clipDiv = document.createElement('div');
-        clipDiv.className = 'clip-item';
-        
-        const blobUrl = URL.createObjectURL(blob);
-
-        clipDiv.innerHTML = `
-          <div class="clip-header">🎬 Video ${index}</div>
-          <div class="clip-actions">
-            <button class="clip-btn btn-preview" id="prev-${index}">👁️ Ver</button>
-            <button class="clip-btn btn-download" id="down-${index}">⬇️ Descargar</button>
-          </div>
-          <div id="cloud-container-${index}" style="margin-top: 5px;">
-            <button class="clip-btn btn-upload" id="upload-${index}" style="width: 100%;">☁️ Generar Link (Gofile)</button>
-          </div>
-        `;
-        clipsList.prepend(clipDiv); 
-
-        // PREVIEW
-        document.getElementById(`prev-${index}`).onclick = () => {
-          const modal = document.getElementById('previewModal');
-          const player = document.getElementById('previewPlayer');
-          player.src = blobUrl;
-          modal.style.display = 'flex';
-          player.play();
-        };
-
-        // DESCARGAR
-        document.getElementById(`down-${index}`).onclick = () => {
-          const a = document.createElement('a');
-          a.href = blobUrl;
-          a.download = fileName;
-          a.click();
-        };
-
-        // GENERAR LINK CON GOFILE API OFICIAL
-        document.getElementById(`upload-${index}`).onclick = async function() {
-          const container = document.getElementById(`cloud-container-${index}`);
-          this.innerText = "⏳ Buscando servidor Gofile...";
-          this.disabled = true;
-
-          try {
-            // 1. Obtener el mejor servidor disponible de Gofile
-            const serverRes = await fetch('https://api.gofile.io/servers');
-            const serverData = await serverRes.json();
-            
-            if (serverData.status !== 'ok') throw new Error("No se pudo conectar a Gofile");
-            const serverName = serverData.data.servers[0].name;
-
-            this.innerText = "⏳ Subiendo video a Gofile...";
-
-            // 2. Subir el archivo mediante multipart/form-data al servidor asignado
-            const formData = new FormData();
-            formData.append('file', blob, fileName);
-
-            const uploadRes = await fetch(`https://${serverName}.gofile.io/contents/uploadfile`, {
-              method: 'POST',
-              body: formData
-            });
-            const uploadData = await uploadRes.json();
-
-            if (uploadData.status === 'ok' && uploadData.data && uploadData.data.downloadPage) {
-              const fileUrl = uploadData.data.downloadPage;
-              
-              container.innerHTML = `
-                <div style="background: var(--bg-color); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px;">
-                  <label style="color: #48bb78; font-size: 0.8rem;">✅ Link Gofile generado con éxito</label>
-                  <input type="text" value="${fileUrl}" readonly style="background: var(--card-bg);">
-                  <div class="clip-actions">
-                    <button class="clip-btn btn-preview" onclick="window.open('${fileUrl}', '_blank')">🌐 Abrir Link</button>
-                    <button class="clip-btn btn-whatsapp" onclick="window.open('https://wa.me/?text=' + encodeURIComponent('¡Mira el video del partido aquí: ${fileUrl}'), '_blank')">📲 WhatsApp</button>
-                  </div>
+    <!-- Encabezado / Navbar -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50 no-print">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center text-amber-500 font-extrabold text-xl">
+                    <i class="fa-solid fa-wrench"></i>
                 </div>
-              `;
-            } else {
-              throw new Error("Respuesta inválida de Gofile");
+                <div>
+                    <h1 class="font-extrabold text-base sm:text-lg tracking-wider uppercase leading-tight">Taller <span class="text-amber-500">El Yama</span></h1>
+                    <p class="text-[10px] text-slate-400 font-medium">Control de Mecánica y Trabajos</p>
+                </div>
+            </div>
+            <button onclick="app.showHelpModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-circle-question"></i>
+                <span>Instrucciones</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-4xl w-full mx-auto px-4 py-6 flex-grow space-y-6 no-print">
+
+        <!-- Guía Rápida para Papá -->
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start space-x-3 text-amber-900 shadow-sm">
+            <i class="fa-solid fa-lightbulb text-amber-600 text-xl mt-0.5"></i>
+            <div class="text-xs space-y-1">
+                <p class="font-bold">¿Cómo usar la pantalla?</p>
+                <p class="text-amber-800 leading-relaxed">Completá los datos del vehículo abajo y tocá <strong>"Guardar Ficha"</strong>. Al presionar <strong>"Imprimir B/N"</strong> se genera el papel limpio en blanco y negro listo para entregar al cliente o guardar en el taller.</p>
+            </div>
+        </div>
+
+        <!-- Formulario de Entrada de Trabajo -->
+        <section class="bg-white rounded-3xl border border-slate-200 p-5 sm:p-7 shadow-sm space-y-5">
+            <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
+                <div>
+                    <h2 class="font-extrabold text-lg text-slate-900">Nueva Ficha de Entrada</h2>
+                    <p class="text-xs text-slate-500">Ingresá los datos del auto o moto que entra al taller</p>
+                </div>
+                <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200">Paso 1 de 2</span>
+            </div>
+
+            <form id="job-form" onsubmit="app.handleFormSubmit(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nombre del Cliente</label>
+                        <input type="text" id="client-name" required placeholder="Ej: Juan Pérez" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Teléfono de Contacto</label>
+                        <input type="tel" id="client-phone" placeholder="Ej: 099 123 456" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Vehículo / Modelo</label>
+                        <input type="text" id="vehicle-model" required placeholder="Ej: Toyota Hilux / Vespa 125" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Matrícula / Matrícula</label>
+                        <input type="text" id="vehicle-plate" placeholder="Ej: QAB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kilometraje / Horas</label>
+                        <input type="text" id="vehicle-km" placeholder="Ej: 145.000 km" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Trabajo a Realizar / Detalle de Falla</label>
+                    <textarea id="job-details" rows="3" required placeholder="Ej: Cambio de aceite, filtro y revisión de frenos delanteros..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Presupuesto Estimado ($U)</label>
+                        <input type="number" id="job-price" placeholder="Ej: 3500" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Estado Inicial</label>
+                        <select id="job-status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition font-semibold">
+                            <option value="En Espera">En Espera / Ingresado</option>
+                            <option value="En Reparación">En Reparación</option>
+                            <option value="Terminado">Terminado / Pronto</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-2xl transition shadow-md flex items-center justify-center space-x-2 text-sm">
+                        <i class="fa-solid fa-floppy-disk text-amber-500"></i>
+                        <span>Guardar y Generar Ficha</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Historial de Fichas -->
+        <section class="bg-white rounded-3xl border border-slate-200 p-5 sm:p-7 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h2 class="font-extrabold text-lg text-slate-900">Historial de Fichas Guardadas</h2>
+                <span id="jobs-count" class="text-xs font-bold bg-slate-100 text-slate-700 px-3 py-1 rounded-full border border-slate-200">0 fichas</span>
+            </div>
+
+            <div id="jobs-list" class="space-y-3">
+                <!-- Se llena con JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- ÁREA DE IMPRESIÓN (Plantilla limpia B/N) -->
+    <div id="print-area" class="hidden">
+        <!-- Renderizado dinámico para imprimir -->
+    </div>
+
+    <!-- Modal Instrucciones -->
+    <div id="help-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-900 text-base">Instrucciones de Uso - Taller El Yama</h3>
+                <button onclick="app.closeHelpModal()" class="text-slate-400 hover:text-slate-900"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
+                <p><strong>1. Guardar ficha:</strong> Llená los campos del cliente y vehículo. Al apretar "Guardar y Generar Ficha" se guarda solo en el teléfono.</p>
+                <p><strong>2. Imprimir sin gastar tinta:</strong> Tocá el botón "Imprimir B/N" en cualquier trabajo de la lista. Se abre la hoja formateada únicamente en texto blanco y negro de alto contraste.</p>
+                <p><strong>3. Teclado Móvil:</strong> Al guardar o tocar cualquier botón, la pantalla se limpia automáticamente bajando el teclado y ajustando el foco arriba.</p>
+            </div>
+
+            <button onclick="app.closeHelpModal()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs">Entendido</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Lógica de Aplicación -->
+    <script>
+        class TallerApp {
+            constructor() {
+                this.jobs = JSON.parse(localStorage.getItem('yama_taller_jobs')) || [];
+                this.init();
             }
-          } catch (err) {
-            this.innerText = "❌ Falló la subida. Reintentar";
-            this.disabled = false;
-            alert("Hubo un problema al conectar con Gofile. Verifica tu conexión e inténtalo de nuevo.");
-          }
-        };
-      }
-    }
 
-    // ========================================================
-    // VISOR REMOTO
-    // ========================================================
-    function initViewerMode(targetId) {
-      const viewerVideo = document.getElementById('viewerVideo');
-      const viewerStatus = document.getElementById('viewerStatus');
-      const vRecordBtn = document.getElementById('vRecordBtn');
-      const vStopBtn = document.getElementById('vStopBtn');
-      
-      let viewerConn = null;
-      const viewerPeer = new Peer(peerConfig); 
-
-      viewerPeer.on('open', () => { connectToHost(); });
-      viewerPeer.on('disconnected', () => { viewerPeer.reconnect(); });
-
-      function connectToHost() {
-        viewerConn = viewerPeer.connect(targetId, { reliable: true });
-
-        viewerConn.on('open', () => {
-          viewerStatus.innerText = "Conectado. Solicitando video... 🟡";
-          viewerConn.send({ type: 'VIEWER_READY' }); 
-          vRecordBtn.disabled = false;
-        });
-
-        viewerConn.on('data', (data) => {
-          if (data.type === 'STATE') {
-            if (data.isRecording) {
-              vRecordBtn.style.display = 'none'; vStopBtn.style.display = 'flex';
-              document.getElementById('vRecIndicator').classList.add('visible', 'recording');
-            } else {
-              vRecordBtn.style.display = 'flex'; vStopBtn.style.display = 'none';
-              document.getElementById('vRecIndicator').classList.remove('visible', 'recording');
+            init() {
+                this.renderJobsList();
             }
-          }
-        });
 
-        viewerConn.on('close', () => {
-          viewerStatus.innerText = "Desconectado. Reconectando... 🔴";
-          setTimeout(connectToHost, 3000);
-        });
-      }
+            // Quita el foco de cualquier campo abierto para bajar el teclado móvil y restaurar la pantalla
+            resetMobileView() {
+                if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                    document.activeElement.blur();
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
 
-      viewerPeer.on('call', (call) => {
-        call.answer(); 
-        call.on('stream', (remoteStream) => {
-          viewerVideo.srcObject = remoteStream;
-          viewerStatus.innerText = "EN VIVO 🟢";
-          viewerStatus.style.color = "var(--accent-green)";
-        });
-      });
+            handleFormSubmit(e) {
+                e.preventDefault();
 
-      vRecordBtn.addEventListener('click', () => { if(viewerConn && viewerConn.open) viewerConn.send({ type: 'CMD_START_REC' }); });
-      vStopBtn.addEventListener('click', () => { if(viewerConn && viewerConn.open) viewerConn.send({ type: 'CMD_STOP_REC' }); });
-    }
-  </script>
+                const newJob = {
+                    id: Date.now().toString(),
+                    clientName: document.getElementById('client-name').value.trim(),
+                    clientPhone: document.getElementById('client-phone').value.trim(),
+                    vehicleModel: document.getElementById('vehicle-model').value.trim(),
+                    vehiclePlate: document.getElementById('vehicle-plate').value.trim().toUpperCase(),
+                    vehicleKm: document.getElementById('vehicle-km').value.trim(),
+                    jobDetails: document.getElementById('job-details').value.trim(),
+                    jobPrice: document.getElementById('job-price').value.trim(),
+                    jobStatus: document.getElementById('job-status').value,
+                    date: new Date().toLocaleDateString('es-UY', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                };
+
+                this.jobs.unshift(newJob);
+                this.saveJobs();
+                this.renderJobsList();
+
+                // Limpiar formulario
+                document.getElementById('job-form').reset();
+
+                // Cerrar teclado y acomodar pantalla
+                this.resetMobileView();
+            }
+
+            saveJobs() {
+                localStorage.setItem('yama_taller_jobs', JSON.stringify(this.jobs));
+            }
+
+            deleteJob(id) {
+                if (confirm('¿Deseas borrar esta ficha del taller?')) {
+                    this.jobs = this.jobs.filter(j => j.id !== id);
+                    this.saveJobs();
+                    this.renderJobsList();
+                    this.resetMobileView();
+                }
+            }
+
+            renderJobsList() {
+                const listEl = document.getElementById('jobs-list');
+                const countEl = document.getElementById('jobs-count');
+
+                countEl.innerText = `${this.jobs.length} ficha(s)`;
+
+                if (this.jobs.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="text-center py-10 bg-slate-50 border border-slate-200 rounded-2xl text-slate-500 text-xs">
+                            <i class="fa-solid fa-folder-open text-2xl text-slate-300 mb-2 block"></i>
+                            No hay fichas registradas. Completá el formulario arriba para guardar la primera.
+                        </div>
+                    `;
+                    return;
+                }
+
+                listEl.innerHTML = this.jobs.map(j => `
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-white">${j.vehiclePlate || 'SIN CHAPA'}</span>
+                                <h3 class="font-bold text-sm text-slate-900">${j.vehicleModel} — <span class="text-slate-600 font-semibold">${j.clientName}</span></h3>
+                            </div>
+                            <p class="text-xs text-slate-600 line-clamp-1"><strong>Trabajo:</strong> ${j.jobDetails}</p>
+                            <p class="text-[11px] text-slate-400">Fecha: ${j.date} • Tel: ${j.clientPhone || 'N/A'} ${j.jobPrice ? `• $U${j.jobPrice}` : ''}</p>
+                        </div>
+
+                        <div class="flex items-center space-x-2 shrink-0">
+                            <button onclick="app.printJob('${j.id}')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3 py-2 rounded-xl transition shadow-sm flex items-center space-x-1.5">
+                                <i class="fa-solid fa-print text-amber-400"></i>
+                                <span>Imprimir B/N</span>
+                            </button>
+                            <button onclick="app.deleteJob('${j.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs p-2 rounded-xl transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            printJob(id) {
+                this.resetMobileView();
+
+                const job = this.jobs.find(j => j.id === id);
+                if (!job) return;
+
+                const printArea = document.getElementById('print-area');
+                
+                // Formato de Ficha en Blanco y Negro estricto
+                printArea.innerHTML = `
+                    <div style="font-family: Arial, sans-serif; padding: 20px; color: #000; background: #fff; max-width: 800px; margin: 0 auto; border: 2px solid #000;">
+                        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+                            <h1 style="font-size: 22px; font-weight: bold; margin: 0; text-transform: uppercase;">TALLER EL YAMA</h1>
+                            <p style="font-size: 12px; margin: 3px 0 0 0;">Servicio Mecánico y Mantenimiento de Vehículos</p>
+                            <p style="font-size: 10px; margin: 2px 0 0 0;">Fecha de emisión: ${job.date}</p>
+                        </div>
+
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px;">
+                            <tr>
+                                <td style="padding: 5px; border: 1px solid #000; width: 50%;"><strong>CLIENTE:</strong> ${job.clientName}</td>
+                                <td style="padding: 5px; border: 1px solid #000; width: 50%;"><strong>TELÉFONO:</strong> ${job.clientPhone || '---------'}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border: 1px solid #000;"><strong>VEHÍCULO / MODELO:</strong> ${job.vehicleModel}</td>
+                                <td style="padding: 5px; border: 1px solid #000;"><strong>MATRÍCULA:</strong> ${job.vehiclePlate || '---------'}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border: 1px solid #000;"><strong>KILOMETRAJE:</strong> ${job.vehicleKm || '---------'}</td>
+                                <td style="padding: 5px; border: 1px solid #000;"><strong>ESTADO:</strong> ${job.jobStatus}</td>
+                            </tr>
+                        </table>
+
+                        <div style="border: 1px solid #000; padding: 10px; margin-bottom: 15px; font-size: 12px; min-height: 100px;">
+                            <strong>DETALLE DEL TRABAJO / REPARACIÓN:</strong>
+                            <p style="margin-top: 8px; white-space: pre-wrap;">${job.jobDetails}</p>
+                        </div>
+
+                        <div style="text-align: right; font-size: 14px; font-weight: bold; margin-bottom: 30px;">
+                            PRESUPUESTO ESTIMADO: $U ${job.jobPrice || '_________'}
+                        </div>
+
+                        <div style="margin-top: 50px; display: flex; justify-content: space-between; text-align: center; font-size: 11px;">
+                            <div style="width: 40%; border-top: 1px solid #000; padding-top: 5px;">Firma / Conformidad Cliente</div>
+                            <div style="width: 40%; border-top: 1px solid #000; padding-top: 5px;">Taller El Yama</div>
+                        </div>
+                    </div>
+                `;
+
+                printArea.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    window.print();
+                    printArea.classList.add('hidden');
+                }, 200);
+            }
+
+            showHelpModal() {
+                this.resetMobileView();
+                document.getElementById('help-modal').classList.remove('hidden');
+            }
+
+            closeHelpModal() {
+                document.getElementById('help-modal').classList.add('hidden');
+                this.resetMobileView();
+            }
+        }
+
+        const app = new TallerApp();
+    </script>
 </body>
 </html>
