@@ -59,7 +59,7 @@
             <i class="fa-solid fa-lightbulb text-amber-600 text-xl mt-0.5"></i>
             <div class="text-xs space-y-1">
                 <p class="font-bold">¿Cómo usar la pantalla?</p>
-                <p class="text-amber-800 leading-relaxed">Completá los datos del vehículo abajo y tocá <strong>"Guardar Ficha"</strong>. Al presionar <strong>"Imprimir B/N"</strong> se genera el papel limpio en blanco y negro listo para entregar al cliente o guardar en el taller.</p>
+                <p class="text-amber-800 leading-relaxed">Ingresá los datos del vehículo. Escribí el kilometraje y tocá la <strong>varita mágica (🪄)</strong> para ver los mantenimientos o fallas comunes sugeridas. Tocá <strong>"Guardar Ficha"</strong> para guardarlo en el teléfono.</p>
             </div>
         </div>
 
@@ -85,24 +85,41 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Vehículo / Modelo</label>
                         <input type="text" id="vehicle-model" required placeholder="Ej: Toyota Hilux / Vespa 125" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Matrícula / Matrícula</label>
-                        <input type="text" id="vehicle-plate" placeholder="Ej: QAB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition uppercase">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kilometraje</label>
+                        <div class="flex space-x-2">
+                            <input type="number" id="vehicle-km" placeholder="Ej: 5000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition">
+                            <button type="button" onclick="app.suggestMaintenanceByKm()" title="Analizar mantenimientos con varita mágica" class="bg-amber-500 hover:bg-amber-600 text-slate-900 border border-amber-400 font-bold px-4 rounded-xl text-lg transition flex items-center justify-center shrink-0 shadow-sm">
+                                🪄
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kilometraje / Horas</label>
-                        <input type="text" id="vehicle-km" placeholder="Ej: 145.000 km" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition">
+                </div>
+
+                <!-- Cuadro de Sugerencias de Mantenimiento por Varita Mágica -->
+                <div id="km-suggestions-box" class="hidden bg-slate-900 text-slate-100 p-4 rounded-2xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <span class="text-xs font-bold text-amber-400 flex items-center space-x-1.5">
+                            <span>🪄 Mantenimientos recomendados según Kilometraje</span>
+                        </span>
+                        <button type="button" onclick="app.closeKmSuggestions()" class="text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
                     </div>
+                    <div id="km-suggestions-content" class="text-xs leading-relaxed text-slate-300 space-y-1">
+                        <!-- Generado por JS -->
+                    </div>
+                    <button type="button" onclick="app.applySuggestionsToJob()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition">
+                        Copiar mantenimientos al detalle de la ficha
+                    </button>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Trabajo a Realizar / Detalle de Falla</label>
-                    <textarea id="job-details" rows="3" required placeholder="Ej: Cambio de aceite, filtro y revisión de frenos delanteros..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition"></textarea>
+                    <textarea id="job-details" rows="3" required placeholder="Ej: Cambio de aceite, filtro y revisión de frenos..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-slate-800 outline-none transition"></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -157,8 +174,8 @@
             
             <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
                 <p><strong>1. Guardar ficha:</strong> Llená los campos del cliente y vehículo. Al apretar "Guardar y Generar Ficha" se guarda solo en el teléfono.</p>
-                <p><strong>2. Imprimir sin gastar tinta:</strong> Tocá el botón "Imprimir B/N" en cualquier trabajo de la lista. Se abre la hoja formateada únicamente en texto blanco y negro de alto contraste.</p>
-                <p><strong>3. Teclado Móvil:</strong> Al guardar o tocar cualquier botón, la pantalla se limpia automáticamente bajando el teclado y ajustando el foco arriba.</p>
+                <p><strong>2. Varita Mágica de Kilometraje (🪄):</strong> Poné los km del auto o moto y tocá el botón de la varita. Te dirá qué mantenimientos o revisiones le corresponden por kilometraje.</p>
+                <p><strong>3. Imprimir sin gastar tinta:</strong> Tocá el botón "Imprimir B/N" en cualquier trabajo de la lista para sacar el comprobante impreso en blanco y negro.</p>
             </div>
 
             <button onclick="app.closeHelpModal()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs">Entendido</button>
@@ -170,6 +187,7 @@
         class TallerApp {
             constructor() {
                 this.jobs = JSON.parse(localStorage.getItem('yama_taller_jobs')) || [];
+                this.lastSuggestedText = '';
                 this.init();
             }
 
@@ -177,12 +195,90 @@
                 this.renderJobsList();
             }
 
-            // Quita el foco de cualquier campo abierto para bajar el teclado móvil y restaurar la pantalla
             resetMobileView() {
                 if (document.activeElement && typeof document.activeElement.blur === 'function') {
                     document.activeElement.blur();
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            suggestMaintenanceByKm() {
+                this.resetMobileView();
+                const kmInput = document.getElementById('vehicle-km').value;
+                const km = parseInt(kmInput, 10);
+
+                const box = document.getElementById('km-suggestions-box');
+                const content = document.getElementById('km-suggestions-content');
+
+                if (isNaN(km) || km < 0) {
+                    content.innerHTML = `<p class="text-amber-400">Por favor ingresá una cifra válida de kilometraje antes de presionar la varita.</p>`;
+                    box.classList.remove('hidden');
+                    return;
+                }
+
+                let suggestions = [];
+
+                if (km <= 10000) {
+                    suggestions = [
+                        "• Primer/Segundo cambio de aceite de motor y filtro de aceite.",
+                        "• Inspección de niveles de fluidos (refrigerante, líquido de frenos).",
+                        "• Revisión de presión y desgaste de neumáticos.",
+                        "• Inspección visual de suspensión y ajuste general."
+                    ];
+                } else if (km <= 30000) {
+                    suggestions = [
+                        "• Cambio de aceite de motor y filtro de aceite.",
+                        "• Reemplazo del filtro de aire del motor y filtro de cabina.",
+                        "• Verificación y limpieza del sistema de frenos (pastillas y discos).",
+                        "• Rotación y balanceo de neumáticos.",
+                        "• Inspección de batería y bornes."
+                    ];
+                } else if (km <= 60000) {
+                    suggestions = [
+                        "• Mantenimiento general / Service intermedio.",
+                        "• Cambio de pastillas de freno delanteras (si aplica desgaste).",
+                        "• Reemplazo del filtro de combustible y bujías de encendido.",
+                        "• Cambio total del líquido de frenos y refrigerante.",
+                        "• Control de correas accesorias y amortiguadores."
+                    ];
+                } else if (km <= 100000) {
+                    suggestions = [
+                        "• Service completo de 80.000 / 100.000 km.",
+                        "• Reemplazo de la Correa de Distribución y tensor (Vital).",
+                        "• Inspección/cambio de bomba de agua y líquido refrigerante.",
+                        "• Cambio de aceite de caja de cambios (Manual o Automática).",
+                        "• Control de bujes de suspensión, tren delantero y rotulas."
+                    ];
+                } else {
+                    suggestions = [
+                        "• Vehículo con alto kilometraje (>100.000 km).",
+                        "• Control preventivo de pérdidas de aceite en retenes y juntas.",
+                        "• Inspección de estado de embrague y amortiguadores traseros/delanteros.",
+                        "• Cambio de aceite de motor de mayor viscosidad si consume.",
+                        "• Revisión de sistema de escape, bujías, cables e inyectores."
+                    ];
+                }
+
+                this.lastSuggestedText = `Revisiones sugeridas a los ${km} km:\n` + suggestions.join('\n');
+                content.innerHTML = `<p class="font-bold text-white mb-1">Para ${km} km:</p>` + suggestions.map(s => `<p>${s}</p>`).join('');
+                box.classList.remove('hidden');
+            }
+
+            closeKmSuggestions() {
+                document.getElementById('km-suggestions-box').classList.add('hidden');
+            }
+
+            applySuggestionsToJob() {
+                const detailsInput = document.getElementById('job-details');
+                if (detailsInput && this.lastSuggestedText) {
+                    if (detailsInput.value.trim().length > 0) {
+                        detailsInput.value += '\n\n' + this.lastSuggestedText;
+                    } else {
+                        detailsInput.value = this.lastSuggestedText;
+                    }
+                }
+                this.closeKmSuggestions();
+                this.resetMobileView();
             }
 
             handleFormSubmit(e) {
@@ -193,7 +289,6 @@
                     clientName: document.getElementById('client-name').value.trim(),
                     clientPhone: document.getElementById('client-phone').value.trim(),
                     vehicleModel: document.getElementById('vehicle-model').value.trim(),
-                    vehiclePlate: document.getElementById('vehicle-plate').value.trim().toUpperCase(),
                     vehicleKm: document.getElementById('vehicle-km').value.trim(),
                     jobDetails: document.getElementById('job-details').value.trim(),
                     jobPrice: document.getElementById('job-price').value.trim(),
@@ -207,6 +302,7 @@
 
                 // Limpiar formulario
                 document.getElementById('job-form').reset();
+                this.closeKmSuggestions();
 
                 // Cerrar teclado y acomodar pantalla
                 this.resetMobileView();
@@ -245,11 +341,10 @@
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div class="space-y-1">
                             <div class="flex items-center space-x-2">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-white">${j.vehiclePlate || 'SIN CHAPA'}</span>
                                 <h3 class="font-bold text-sm text-slate-900">${j.vehicleModel} — <span class="text-slate-600 font-semibold">${j.clientName}</span></h3>
                             </div>
-                            <p class="text-xs text-slate-600 line-clamp-1"><strong>Trabajo:</strong> ${j.jobDetails}</p>
-                            <p class="text-[11px] text-slate-400">Fecha: ${j.date} • Tel: ${j.clientPhone || 'N/A'} ${j.jobPrice ? `• $U${j.jobPrice}` : ''}</p>
+                            <p class="text-xs text-slate-600 line-clamp-2"><strong>Trabajo:</strong> ${j.jobDetails}</p>
+                            <p class="text-[11px] text-slate-400">Fecha: ${j.date} ${j.vehicleKm ? `• Km: ${j.vehicleKm}` : ''} • Tel: ${j.clientPhone || 'N/A'} ${j.jobPrice ? `• $U${j.jobPrice}` : ''}</p>
                         </div>
 
                         <div class="flex items-center space-x-2 shrink-0">
@@ -289,11 +384,10 @@
                             </tr>
                             <tr>
                                 <td style="padding: 5px; border: 1px solid #000;"><strong>VEHÍCULO / MODELO:</strong> ${job.vehicleModel}</td>
-                                <td style="padding: 5px; border: 1px solid #000;"><strong>MATRÍCULA:</strong> ${job.vehiclePlate || '---------'}</td>
+                                <td style="padding: 5px; border: 1px solid #000;"><strong>KILOMETRAJE:</strong> ${job.vehicleKm ? job.vehicleKm + ' km' : '---------'}</td>
                             </tr>
                             <tr>
-                                <td style="padding: 5px; border: 1px solid #000;"><strong>KILOMETRAJE:</strong> ${job.vehicleKm || '---------'}</td>
-                                <td style="padding: 5px; border: 1px solid #000;"><strong>ESTADO:</strong> ${job.jobStatus}</td>
+                                <td style="padding: 5px; border: 1px solid #000;" colspan="2"><strong>ESTADO DEL TRABAJO:</strong> ${job.jobStatus}</td>
                             </tr>
                         </table>
 
@@ -306,7 +400,7 @@
                             PRESUPUESTO ESTIMADO: $U ${job.jobPrice || '_________'}
                         </div>
 
-                        <div style="margin-top: 50px; display: flex; justify-content: space-between; text-align: center; font-size: 11px;">
+                        <div style="margin-top: 50px; display: flex; justify-between; text-align: center; font-size: 11px;">
                             <div style="width: 40%; border-top: 1px solid #000; padding-top: 5px;">Firma / Conformidad Cliente</div>
                             <div style="width: 40%; border-top: 1px solid #000; padding-top: 5px;">Taller El Yama</div>
                         </div>
