@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <title>EL MONSTRUO DEL MONTE</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Courier New',monospace;color:#ddd;user-select:none;-webkit-user-select:none}
@@ -58,6 +61,52 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Co
 #credits div{position:absolute;left:0;right:0;top:100%;text-align:center;font-size:24px;line-height:2.2;color:#cfc8b4;letter-spacing:3px;animation:cr 26s linear forwards}
 #credits.static div{animation:none;top:8%}
 @keyframes cr{to{top:-120%}}
+
+/* ===== TÁCTIL / MÓVIL ===== */
+:root{--sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px)}
+html,body{touch-action:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+.tch{display:none}
+body.touch .kbd{display:none}body.touch .tch{display:inline}
+#tc{display:none}body.touch #tc{display:block}
+.tcb{position:fixed;display:none;z-index:15;border-radius:50%;border:2px solid rgba(255,255,255,.45);background:rgba(20,20,24,.5);color:#fff;font:bold 20px 'Courier New',monospace;align-items:center;justify-content:center;touch-action:none;-webkit-user-select:none;user-select:none;padding:0;cursor:pointer}
+.tcb.on{background:rgba(190,40,30,.7);border-color:#fff}
+#stk{position:fixed;left:calc(30px + var(--sl));bottom:30px;width:120px;height:120px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(20,20,24,.3);z-index:14;display:none;pointer-events:none}
+#knob{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px;border-radius:50%;background:rgba(255,255,255,.35);border:2px solid rgba(255,255,255,.6)}
+body.tmove #stk{display:block}
+body.tmove #tF{display:flex}
+body.tmove.twalk #tRun{display:flex}
+body.tact #tE{display:flex}
+body.tfight #tFire,body.tfight #tR{display:flex}
+body.tplay #tPause{display:flex}
+#tE{right:calc(22px + var(--sr));bottom:28px;width:76px;height:76px}
+#tF{right:calc(30px + var(--sr));bottom:116px;width:54px;height:54px}
+#tFire{right:calc(112px + var(--sr));bottom:36px;width:88px;height:88px;font-size:26px}
+#tR{right:calc(126px + var(--sr));bottom:132px;width:54px;height:54px}
+#tRun{left:calc(176px + var(--sl));bottom:40px;width:56px;height:56px}
+#tRun.on{background:rgba(40,120,200,.7)}
+#tPause{top:8px;right:calc(10px + var(--sr));width:40px;height:40px;font-size:16px}
+#dlg{cursor:pointer}
+#rot{position:fixed;inset:0;background:#000;z-index:60;display:none;align-items:center;justify-content:center;text-align:center;font-size:20px;color:#ccc;padding:30px;line-height:1.7}
+@media (orientation:portrait){body.touch #rot{display:flex}}
+body.touch #help,body.touch #rec{display:none}
+body.touch #stamp{font-size:12px;top:10px;right:calc(58px + var(--sr))}
+body.touch #obj{font-size:13px;top:8px;left:calc(12px + var(--sl));max-width:38%}
+body.touch #hb{left:50%;transform:translateX(-50%);bottom:8px;width:190px}
+body.touch #ammo{right:auto;left:50%;transform:translateX(-50%);bottom:34px;font-size:22px}
+body.touch #spd{right:auto;left:50%;transform:translateX(-50%);bottom:8px;font-size:22px;text-align:center}
+body.touch #monb{width:240px;top:8px}
+body.touch #prompt{pointer-events:auto;bottom:32%;font-size:16px;padding:10px 18px}
+body.touch #qte{top:30%;font-size:22px}
+body.touch #qte b{font-size:40px}
+body.touch #qte .bar{width:240px}
+@media (max-height:520px){
+.scr{justify-content:flex-start;overflow-y:auto;gap:8px;padding:8px}
+.scr>:first-child{margin-top:auto}.scr>:last-child{margin-bottom:auto}
+.scr h1{font-size:30px;margin-bottom:2px;letter-spacing:4px}.scr h2{font-size:24px}
+.btn{font-size:15px;padding:7px 22px;min-width:230px}
+.small{font-size:11px;line-height:1.4}.row{font-size:14px}.row input,.row select{width:150px}
+#dlg{padding:8px 14px 6px;bottom:3%}#dn{font-size:13px;margin-bottom:3px}#dt{font-size:16px;line-height:1.3}#dh{font-size:11px;margin-top:4px}
+#subs{font-size:14px;bottom:26%}#toast{font-size:14px;bottom:30%}#card{font-size:20px;letter-spacing:3px}#card small{font-size:12px}}
 </style>
 </head>
 <body>
@@ -76,11 +125,14 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Co
   <div id="ammo"></div>
   <div id="spd"></div>
 </div>
-<div id="qte"><b>¡SOLTATE!</b>PRESIONÁ <span style="color:#ff0">E</span> REPETIDAMENTE<div class="bar"><i id="qbar"></i></div></div>
+<div id="qte"><b>¡SOLTATE!</b><span class="kbd">PRESIONÁ <span style="color:#ff0">E</span> REPETIDAMENTE</span><span class="tch">TOCÁ EL BOTÓN <span style="color:#ff0">E</span> REPETIDAMENTE</span><div class="bar"><i id="qbar"></i></div></div>
 <div id="subs"></div><div id="toast"></div>
-<div id="dlg"><div id="dn"></div><div id="dt"></div><div id="dh">PRESIONÁ ESPACIO PARA CONTINUAR ▶</div></div>
+<div id="dlg"><div id="dn"></div><div id="dt"></div><div id="dh"><span class="kbd">PRESIONÁ ESPACIO PARA CONTINUAR ▶</span><span class="tch">TOCÁ PARA CONTINUAR ▶</span></div></div>
 <div id="card"></div>
 <div id="credits"><div id="credtxt"></div></div>
+<div id="tc"><div id="stk"><i id="knob"></i></div>
+<button class="tcb" id="tE" aria-label="Interactuar">E</button><button class="tcb" id="tF" aria-label="Linterna">🔦</button><button class="tcb" id="tFire" aria-label="Disparar">🔫</button><button class="tcb" id="tR" aria-label="Recargar">R</button><button class="tcb" id="tRun" aria-label="Correr">»</button><button class="tcb" id="tPause" aria-label="Pausa">⏸</button></div>
+<div id="rot">📱 ↻<br>Girá el teléfono<br>en horizontal para jugar</div>
 <div id="fade"></div>
 
 <div class="scr" id="sMenu">
@@ -89,13 +141,13 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Co
   <button class="btn" id="bCont">CONTINUAR</button>
   <button class="btn" id="bOpt">OPCIONES</button>
   <button class="btn" id="bCred">CRÉDITOS</button>
-  <div class="small">WASD caminar/conducir · RATÓN mirar/apuntar · E interactuar · SHIFT correr · ESPACIO avanzar diálogos · F linterna · CLIC disparar · R recargar · ESC pausa<br>Se recomienda jugar con auriculares y a oscuras.</div>
+  <div class="small"><span class="kbd">WASD caminar/conducir · RATÓN mirar/apuntar · E interactuar · SHIFT correr · ESPACIO avanzar diálogos · F linterna · CLIC disparar · R recargar · ESC pausa</span><span class="tch">JOYSTICK izquierdo caminar/conducir · ARRASTRÁ a la derecha para mirar · E interactuar · 🔦 linterna · » correr · 🔫 disparar · R recargar · ⏸ pausa</span><br>Se recomienda jugar con auriculares y a oscuras.</div>
 </div>
 <div class="scr" id="sOpt" style="z-index:40">
   <h2>OPCIONES</h2>
   <div class="row">VOLUMEN <input type="range" id="rVol" min="0" max="1" step="0.05"></div>
   <div class="row">SENSIBILIDAD <input type="range" id="rSens" min="0.3" max="2.5" step="0.1"></div>
-  <div class="row">CALIDAD <select id="sQual"><option value="0.5">Baja (PC modesta)</option><option value="0.75">Media</option><option value="1">Alta</option></select></div>
+  <div class="row">CALIDAD <select id="sQual"><option value="0.5">Baja (PC modesta)</option><option value="0.6">Celular</option><option value="0.75">Media</option><option value="1">Alta</option></select></div>
   <button class="btn" id="bOptBack">VOLVER</button>
 </div>
 <div class="scr" id="sPause" style="z-index:35">
@@ -133,7 +185,9 @@ const D2=(ax,az,bx,bz)=>Math.hypot(ax-bx,az-bz);
 const angLerp=(a,b,k)=>{const d=((b-a+Math.PI)%(Math.PI*2)+Math.PI*2)%(Math.PI*2)-Math.PI;return a+d*clamp(k,0,1)};
 const V3=THREE.Vector3;
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
-const opt={vol:.7,sens:1,q:.75};
+let TOUCH=false;
+const TOUCH0=matchMedia('(pointer:coarse)').matches||('ontouchstart' in window&&!matchMedia('(any-pointer:fine)').matches);
+const opt={vol:.7,sens:1,q:TOUCH0?.6:.75};
 try{Object.assign(opt,JSON.parse(ls('emdm_opt')||'{}'))}catch(e){}
 function saveOpt(){ls('emdm_opt',JSON.stringify(opt))}
 
@@ -576,7 +630,7 @@ addEventListener('mousedown',e=>{if(e.button===0&&!paused&&!inMenu)fire()});
 let locked=false,noLock=false;
 document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockElement===$('c');if(!locked&&!inMenu&&!S.over&&!paused&&!noLock)setPause(true)});
 document.addEventListener('pointerlockerror',()=>{noLock=true});
-function lock(){try{const p=$('c').requestPointerLock();if(p&&p.catch)p.catch(()=>{noLock=true})}catch(e){noLock=true}}
+function lock(){if(TOUCH){noLock=true;return}try{const p=$('c').requestPointerLock();if(p&&p.catch)p.catch(()=>{noLock=true})}catch(e){noLock=true}}
 $('c').addEventListener('click',()=>{if(!paused&&!inMenu&&!locked&&!noLock&&!S.over)lock()});
 function setPause(p){if(inMenu)return;paused=p;$('sPause').style.display=p?'flex':'none';if(p&&locked)document.exitPointerLock();if(!p&&!noLock)lock();if(p&&AU.ctx)AU.ctx.suspend();if(!p&&AU.ctx)AU.ctx.resume()}
 
@@ -731,7 +785,7 @@ function prepChaseWorld(){resetState();setWorld('house');setHouseLights([1,1,0,0
  MON.tilt.rotation.set(0,0,0);MON.tilt.position.set(0,0,0);MON.g.position.set(hx(-3.5),0,-3.9);MON.g.rotation.y=Math.atan2(1.9,1.2);MON.g.visible=true;MON.mode='cine';S.clues={note:1,phone:1,mirror:1};S.canSleep=true;S.flash=true}
 function startChase(){resetFlow();prepChaseWorld();enterCine();hud(false);fadeNow(1);AU.amb({drone:.28,rain:.4,wind:.15});beginChase();fadeIn(1)}
 function beginChase(){S.phase='chase';setCP('chase');mode='walk';hud(true);S.flash=true;P.x=hx(-1.7);P.z=-3.6;P.yaw=Math.PI/2+.3;P.pitch=0;
- MON.mode='chase';MON.hold=1.1;MON.path=null;MON.rp=0;MON.g.visible=true;setObj('¡ESCAPÁ DE LA CASA! Corrí hasta el auto (SHIFT para correr).');AU.amb({drone:.3})}
+ MON.mode='chase';MON.hold=1.1;MON.path=null;MON.rp=0;MON.g.visible=true;setObj('¡ESCAPÁ DE LA CASA! Corrí hasta el auto (SHIFT o botón » para correr).');AU.amb({drone:.3})}
 function monChase(dt){const m=MON,mp=m.g.position;
  if(m.hold>0){m.hold-=dt;m.spd=0;faceTo(m,P.x,P.z,dt*5);return}
  let tx=P.x,tz=P.z;
@@ -901,7 +955,7 @@ function beginFight(){
  P.x=hx(-3)+.2;P.z=5.1;P.yaw=0;P.pitch=-.05;GUN.visible=true;hud(true);setObj('¡Matá a la criatura! Clic: disparar · R: recargar · munición limitada.');
  AU.roar();shake(.5);AU.amb({drone:.4,rain:.3});hurtT=0}
 function fire(){if(!S.fight||S.reload>0||S.fireCd>0||S.dead||mode!=='walk'||dlg||S.over||paused)return;
- if(S.ammo<=0){AU.click();toast('Sin balas — R para recargar',1.5);return}
+ if(S.ammo<=0){AU.click();toast('Sin balas — recargá (R)',1.5);return}
  S.ammo--;S.fireCd=.24;recoil=1;AU.shot();LT[4].position.copy(camera.position);LT[4].color.setHex(0xffb060);LI.base[4]=2.4;LI.on[4]=1;S.mz=.06;GUN.userData.f.visible=true;
  const o=camera.position.clone(),dir=new V3();camera.getWorldDirection(dir);
  const tests=[[1.35,.75,6],[2.3,.4,14]];let best=null;
@@ -985,7 +1039,7 @@ function updateWalk(dt){
  const st=Math.sin(P.bob)>0?1:-1;if(P.spd>0&&st!==P.lst){P.lst=st;AU.step(P.spd>4)}
  camera.rotation.order='YXZ';camera.up.set(0,1,0);camera.position.set(P.x,1.65+b-(GO.crouch*0),P.z);camera.rotation.set(P.pitch,P.yaw,0);
  if(S.phase==='chase'&&P.z>6.8&&P.x>HO-9&&P.x<HO+9&&!S.dead){escapeYard()}
- const a=(!lockIn&&mode==='walk')?nearestIA():null;curIA=a;const pe=$('prompt');if(a){pe.style.display='block';pe.textContent='[E] '+a.label()}else pe.style.display='none';
+ const a=(!lockIn&&mode==='walk')?nearestIA():null;curIA=a;const pe=$('prompt');if(a){pe.style.display='block';pe.textContent=(TOUCH?'▶ ':'[E] ')+a.label()}else pe.style.display='none';
  if(S.fight){recoil=Math.max(0,recoil-dt*7);GUN.position.set(.22,-.2+(S.reload>0?-.15:0),-.45+recoil*.07);GUN.rotation.x=recoil*.25+(S.reload>0?.8:0)}}
 function updateMonster(dt){const m=MON;
  if(m.mode==='chase')monChase(dt);
@@ -1052,6 +1106,54 @@ $('bRetry').onclick=()=>{$('sOver').style.display='none';const r=S.retry;S.over=
 $('bOverMenu').onclick=()=>toMenu();
 $('bAgain').onclick=()=>{$('sEnd').style.display='none';ls('emdm_cp','');begin('intro')};
 $('bMenuEnd').onclick=()=>toMenu();
+
+
+/* ============ CONTROLES TÁCTILES (autodetección celular / PC) ============ */
+function setTouch(on){if(TOUCH===on)return;TOUCH=on;document.body.classList.toggle('touch',on);noLock=on;if(on&&locked)document.exitPointerLock();for(const k of['KeyW','KeyA','KeyS','KeyD','ShiftLeft'])keys[k]=false;TC.run=false;$('tRun').classList.remove('on');resize()}
+const TC={stk:null,look:new Map(),run:false},STK_R=52;
+function stickKeys(nx,ny){keys.KeyW=ny<-.35;keys.KeyS=ny>.35;keys.KeyA=nx<-.35;keys.KeyD=nx>.35}
+function stickReset(){TC.stk=null;stickKeys(0,0);const s=$('stk');s.style.left='';s.style.top='';s.style.bottom='';$('knob').style.transform=''}
+function applyLook(dx,dy){if(paused||inMenu||dlg)return;const k=.0052*opt.sens;
+ if(mode==='walk'){P.yaw-=dx*k;P.pitch=clamp(P.pitch-dy*k,-1.45,1.45)}
+ else if(mode==='drive'){DR.ly=clamp(DR.ly-dx*k,-1.8,1.8);DR.lp=clamp(DR.lp-dy*k,-.6,.6)}}
+function inUI(t){return t&&t.closest&&t.closest('.scr,.tcb,#dlg,#prompt,input,select,button')}
+addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&!TOUCH)setTouch(true)},true);
+addEventListener('pointerdown',e=>{
+ if(!TOUCH||e.pointerType!=='touch'||inUI(e.target)||paused||inMenu)return;
+ const zone=e.clientX<innerWidth*.42&&e.clientY>innerHeight*.28&&(mode==='walk'||mode==='drive')&&!dlg;
+ if(zone&&!TC.stk){TC.stk={id:e.pointerId,x:e.clientX,y:e.clientY};const s=$('stk');s.style.left=(e.clientX-60)+'px';s.style.top=(e.clientY-60)+'px';s.style.bottom='auto';return}
+ TC.look.set(e.pointerId,{x:e.clientX,y:e.clientY,mv:0,t:performance.now()})});
+addEventListener('pointermove',e=>{if(!TOUCH||e.pointerType!=='touch')return;
+ if(TC.stk&&TC.stk.id===e.pointerId){let dx=e.clientX-TC.stk.x,dy=e.clientY-TC.stk.y;const d=Math.hypot(dx,dy);if(d>STK_R){dx*=STK_R/d;dy*=STK_R/d}$('knob').style.transform='translate('+dx+'px,'+dy+'px)';stickKeys(dx/STK_R,dy/STK_R);return}
+ const l=TC.look.get(e.pointerId);if(l){const dx=e.clientX-l.x,dy=e.clientY-l.y;l.x=e.clientX;l.y=e.clientY;l.mv+=Math.abs(dx)+Math.abs(dy);applyLook(dx,dy)}});
+const tcUp=e=>{if(e.pointerType!=='touch')return;
+ if(TC.stk&&TC.stk.id===e.pointerId){stickReset();return}
+ const l=TC.look.get(e.pointerId);if(l){TC.look.delete(e.pointerId);
+  if(l.mv<14&&performance.now()-l.t<350&&!paused&&!inMenu){if(dlg)advanceDlg();else if(skipFn&&mode!=='walk'&&mode!=='drive')skipFn()}}};
+addEventListener('pointerup',tcUp);addEventListener('pointercancel',tcUp);
+function bindBtn(id,fn,hold){const b=$(id);
+ b.addEventListener('pointerdown',e=>{e.preventDefault();b.classList.add('on');fn();if(hold){clearInterval(b._i);b._i=setInterval(fn,120)}});
+ const up=()=>{b.classList.remove('on');clearInterval(b._i)};['pointerup','pointercancel','pointerleave'].forEach(t=>b.addEventListener(t,up))}
+bindBtn('tE',()=>onKey('KeyE'));
+bindBtn('tF',()=>onKey('KeyF'));
+bindBtn('tR',()=>onKey('KeyR'));
+bindBtn('tFire',()=>{if(!paused&&!inMenu)fire()},true);
+bindBtn('tPause',()=>{if(!inMenu&&!S.over)setPause(true)});
+$('tRun').addEventListener('pointerdown',e=>{e.preventDefault();TC.run=!TC.run;keys.ShiftLeft=TC.run;$('tRun').classList.toggle('on',TC.run)});
+$('dlg').addEventListener('click',()=>advanceDlg());
+$('prompt').addEventListener('click',()=>{if(TOUCH&&!paused&&!inMenu&&mode==='walk'&&!dlg)tryInteract()});
+addEventListener('keydown',e=>{if(TOUCH&&(/^Key[WASDEFR]$/.test(e.code)||e.code.indexOf('Arrow')===0))setTouch(false)},true);
+function goFull(){try{const d=document.documentElement,r=d.requestFullscreen||d.webkitRequestFullscreen;if(r&&!document.fullscreenElement&&!document.webkitFullscreenElement){const p=r.call(d);if(p&&p.catch)p.catch(()=>{})}}catch(e){}
+ try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{})}catch(e){}
+ try{if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}}
+for(const id of['bNew','bCont','bRetry','bResume'])$(id).addEventListener('click',()=>{if(TOUCH)goFull()});
+setInterval(()=>{if(!TOUCH)return;const b=document.body.classList,play=!inMenu&&!paused&&!S.over,mv=play&&(mode==='walk'||mode==='drive')&&!dlg;
+ b.toggle('tplay',play);b.toggle('tmove',mv);b.toggle('twalk',mode==='walk');b.toggle('tact',play&&!dlg&&(mode==='walk'||!!S.qte));b.toggle('tfight',mv&&!!S.fight&&mode==='walk');
+ if(!mv&&TC.stk)stickReset();
+ if(play&&innerHeight>innerWidth*1.1)setPause(true)},120);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&!inMenu&&!paused&&!S.over)setPause(true)});
+addEventListener('orientationchange',()=>setTimeout(resize,250));
+setTouch(TOUCH0);
 
 /* ============ ARRANQUE ============ */
 $('rVol').value=opt.vol;$('rSens').value=opt.sens;$('sQual').value=String(opt.q);
