@@ -3,11 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>EL MONSTRUO DEL MONTE</title>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Courier New',monospace;color:#ddd;user-select:none;-webkit-user-select:none}
@@ -62,57 +58,6 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Co
 #credits div{position:absolute;left:0;right:0;top:100%;text-align:center;font-size:24px;line-height:2.2;color:#cfc8b4;letter-spacing:3px;animation:cr 26s linear forwards}
 #credits.static div{animation:none;top:8%}
 @keyframes cr{to{top:-120%}}
-
-/* ===== MÓVIL ===== */
-html,body{overscroll-behavior:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;touch-action:none}
-#toast,#subs,#qte,#card{pointer-events:none}
-#prompt{pointer-events:auto}
-#tz{position:fixed;inset:0;z-index:5;display:none;touch-action:none}
-#jb{position:fixed;left:100px;top:300px;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(255,255,255,.07);z-index:7;pointer-events:none;display:none;opacity:.35}
-#jk{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:rgba(255,255,255,.28);border:2px solid rgba(255,255,255,.55)}
-#tc{position:fixed;inset:0;z-index:7;pointer-events:none;display:none}
-.tb{position:absolute;display:none;align-items:center;justify-content:center;width:58px;height:58px;border-radius:50%;background:rgba(0,0,0,.45);border:2px solid rgba(255,255,255,.45);color:#eee;font:bold 11px 'Courier New',monospace;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;text-align:center}
-.tb.on{background:rgba(160,30,30,.75)}
-.tb.act{border-color:#ffd34d;color:#ffd34d;box-shadow:0 0 14px rgba(255,211,77,.65)}
-#tbPause{top:62px;right:calc(14px + env(safe-area-inset-right));width:42px;height:42px;font-size:14px}
-#tbF{right:calc(22px + env(safe-area-inset-right));bottom:20px}
-#tbE{right:calc(92px + env(safe-area-inset-right));bottom:20px;width:68px;height:68px}
-#tbFire{right:calc(22px + env(safe-area-inset-right));bottom:88px;width:82px;height:82px;font-size:13px;border-color:rgba(255,90,90,.7)}
-#tbR{right:calc(116px + env(safe-area-inset-right));bottom:96px;font-size:9px}
-#tbGas{right:calc(22px + env(safe-area-inset-right));bottom:88px;width:82px;height:82px;font-size:13px}
-#tbBrk{right:calc(104px + env(safe-area-inset-right));bottom:24px;width:64px;height:64px}
-#gate{position:fixed;inset:0;z-index:999;background:#000;color:#ddd;display:none;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:22px;line-height:1.7;letter-spacing:2px}
-#rot{position:fixed;inset:0;z-index:200;background:#000;color:#ddd;display:none;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:22px;line-height:1.8;letter-spacing:3px}
-@media (orientation:portrait){body.touch #rot{display:flex}}
-body.touch #help{display:none}
-body.touch #obj{font-size:12px;top:8px;left:calc(14px + env(safe-area-inset-left));max-width:42%}
-body.touch #stamp{font-size:12px;top:8px;right:calc(12px + env(safe-area-inset-right));letter-spacing:1px}
-body.touch #rec{font-size:12px;bottom:auto;top:40px;right:calc(14px + env(safe-area-inset-right))}
-body.touch #hb{left:calc(14px + env(safe-area-inset-left));bottom:auto;top:64px;width:150px;font-size:11px}
-body.touch #monb{width:200px;top:8px;font-size:10px}
-body.touch #ammo{right:auto;left:50%;transform:translateX(-50%);bottom:auto;top:40px;font-size:20px}
-body.touch #spd{right:auto;left:50%;transform:translateX(-50%);bottom:auto;top:8px;text-align:center;font-size:20px}
-body.touch #prompt{font-size:14px;bottom:30%;padding:8px 14px}
-body.touch #dlg{bottom:3%;padding:10px 16px 8px;width:min(760px,86%)}
-body.touch #dn{font-size:12px;margin-bottom:4px}
-body.touch #dt{font-size:15px;line-height:1.35}
-body.touch #dh{font-size:10px;margin-top:5px}
-body.touch #subs{font-size:13px;bottom:27%}
-body.touch #toast{font-size:13px;bottom:36%;padding:5px 12px}
-body.touch #qte{font-size:16px}
-body.touch #qte b{font-size:34px}
-body.touch #qte .bar{width:240px;height:18px}
-body.touch #card{font-size:20px;letter-spacing:3px}
-body.touch #credits div{font-size:16px;line-height:2}
-body.touch .scr{touch-action:pan-y;overflow-y:auto;justify-content:flex-start;gap:8px;padding:10px 0}
-body.touch .scr>:first-child{margin-top:auto}
-body.touch .scr>:last-child{margin-bottom:auto}
-body.touch .scr h1{font-size:clamp(24px,9vh,44px);margin-bottom:4px;letter-spacing:3px}
-body.touch .scr h2{font-size:22px}
-body.touch .btn{font-size:15px;padding:8px 18px;min-width:250px;letter-spacing:1px}
-body.touch .small{font-size:11px;max-width:86%;line-height:1.45}
-body.touch .row{font-size:15px}
-body.touch .row input,body.touch .row select{width:150px}
 </style>
 </head>
 <body>
@@ -131,25 +76,12 @@ body.touch .row input,body.touch .row select{width:150px}
   <div id="ammo"></div>
   <div id="spd"></div>
 </div>
-<div id="qte"><b>¡SOLTATE!</b>TOCÁ LA PANTALLA <span style="color:#ff0">SIN PARAR</span><div class="bar"><i id="qbar"></i></div></div>
+<div id="qte"><b>¡SOLTATE!</b>PRESIONÁ <span style="color:#ff0">E</span> REPETIDAMENTE<div class="bar"><i id="qbar"></i></div></div>
 <div id="subs"></div><div id="toast"></div>
-<div id="dlg"><div id="dn"></div><div id="dt"></div><div id="dh">TOCÁ PARA CONTINUAR ▶</div></div>
+<div id="dlg"><div id="dn"></div><div id="dt"></div><div id="dh">PRESIONÁ ESPACIO PARA CONTINUAR ▶</div></div>
 <div id="card"></div>
 <div id="credits"><div id="credtxt"></div></div>
 <div id="fade"></div>
-<div id="tz"></div>
-<div id="jb"><div id="jk"></div></div>
-<div id="tc">
-  <div class="tb" id="tbPause">❚❚</div>
-  <div class="tb" id="tbF">LUZ</div>
-  <div class="tb" id="tbE">ACCIÓN</div>
-  <div class="tb" id="tbFire">FUEGO</div>
-  <div class="tb" id="tbR">RECARGAR</div>
-  <div class="tb" id="tbGas">ACEL</div>
-  <div class="tb" id="tbBrk">FRENO</div>
-</div>
-<div id="rot">GIRÁ EL TELÉFONO<br><span style="font-size:14px;color:#888;letter-spacing:2px">Este juego se juega en horizontal</span></div>
-<div id="gate">EL MONSTRUO DEL MONTE<br><span style="font-size:15px;color:#999">Este juego está hecho solo para teléfono.<br>Abrí esta página desde tu celular.</span></div>
 
 <div class="scr" id="sMenu">
   <h1>EL MONSTRUO<br>DEL MONTE</h1>
@@ -157,7 +89,7 @@ body.touch .row input,body.touch .row select{width:150px}
   <button class="btn" id="bCont">CONTINUAR</button>
   <button class="btn" id="bOpt">OPCIONES</button>
   <button class="btn" id="bCred">CRÉDITOS</button>
-  <div class="small">Joystick izquierdo: moverse (a fondo = correr) · Deslizá el dedo a la derecha para mirar · ACCIÓN: interactuar · LUZ: linterna · Tocá la pantalla para avanzar los diálogos<br>Se recomienda jugar en horizontal, con auriculares y a oscuras.</div>
+  <div class="small">WASD caminar/conducir · RATÓN mirar/apuntar · E interactuar · SHIFT correr · ESPACIO avanzar diálogos · F linterna · CLIC disparar · R recargar · ESC pausa<br>Se recomienda jugar con auriculares y a oscuras.</div>
 </div>
 <div class="scr" id="sOpt" style="z-index:40">
   <h2>OPCIONES</h2>
@@ -170,7 +102,7 @@ body.touch .row input,body.touch .row select{width:150px}
   <h2>PAUSA</h2>
   <button class="btn" id="bResume">REANUDAR</button>
   <button class="btn" id="bPOpt">OPCIONES</button>
-  <button class="btn" id="bRestartCP">REINICIAR PUNTO DE CONTROL</button>
+  <button class="btn" id="bRestartCP">REINICIAR DESDE EL ÚLTIMO PUNTO DE CONTROL</button>
   <button class="btn" id="bQuit">SALIR AL MENÚ</button>
 </div>
 <div class="scr" id="sOver" style="z-index:35;background:rgba(20,0,0,.85)">
@@ -189,11 +121,6 @@ body.touch .row input,body.touch .row select{width:150px}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 'use strict';
-const IS_TOUCH=('ontouchstart' in window)||(navigator.maxTouchPoints>0);
-const PC_OK=/[?&]pc=1/.test(location.search);
-const AIM=IS_TOUCH?1.5:1;
-if(IS_TOUCH)document.body.classList.add('touch');
-if(!IS_TOUCH&&!PC_OK){document.getElementById('gate').style.display='flex';throw new Error('solo telefono');}
 if(typeof THREE==='undefined'){document.body.innerHTML='<p style="color:#fff;padding:40px;font:20px monospace">No se pudo cargar la biblioteca 3D (Three.js). Se necesita conexión a internet la primera vez.</p>';throw new Error('no three');}
 
 /* ============ UTILIDADES ============ */
@@ -266,7 +193,7 @@ camera.rotation.order='YXZ';
 const amb=new THREE.AmbientLight(0x334455,.5);scene.add(amb);
 const beam=new THREE.SpotLight(0xfff0cc,0,40,.42,.5,1.2);camera.add(beam);camera.add(beam.target);
 const LT=[];for(let i=0;i<5;i++){const l=new THREE.PointLight(0xffd9a0,0,12,1.5);l.position.set(0,-50,0);scene.add(l);LT.push(l)}
-function resize(){renderer.setPixelRatio(opt.q);renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();if(IS_TOUCH&&innerHeight>innerWidth&&!inMenu&&!paused)setPause(true)}
+function resize(){renderer.setPixelRatio(opt.q);renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()}
 addEventListener('resize',resize);
 
 /* ============ TEXTURAS ============ */
@@ -645,11 +572,11 @@ function onKey(c){
 addEventListener('mousemove',e=>{if(paused||inMenu||dlg)return;if(!locked&&!noLock)return;
  if(mode==='walk'){P.yaw-=e.movementX*.0022*opt.sens;P.pitch=clamp(P.pitch-e.movementY*.0022*opt.sens,-1.45,1.45)}
  else if(mode==='drive'){DR.ly=clamp(DR.ly-e.movementX*.0022*opt.sens,-1.8,1.8);DR.lp=clamp(DR.lp-e.movementY*.0022*opt.sens,-.6,.6)}});
-addEventListener('mousedown',e=>{if(!IS_TOUCH&&e.button===0&&!paused&&!inMenu)fire()});
-let locked=false,noLock=IS_TOUCH;
+addEventListener('mousedown',e=>{if(e.button===0&&!paused&&!inMenu)fire()});
+let locked=false,noLock=false;
 document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockElement===$('c');if(!locked&&!inMenu&&!S.over&&!paused&&!noLock)setPause(true)});
 document.addEventListener('pointerlockerror',()=>{noLock=true});
-function lock(){if(IS_TOUCH)return;try{const p=$('c').requestPointerLock();if(p&&p.catch)p.catch(()=>{noLock=true})}catch(e){noLock=true}}
+function lock(){try{const p=$('c').requestPointerLock();if(p&&p.catch)p.catch(()=>{noLock=true})}catch(e){noLock=true}}
 $('c').addEventListener('click',()=>{if(!paused&&!inMenu&&!locked&&!noLock&&!S.over)lock()});
 function setPause(p){if(inMenu)return;paused=p;$('sPause').style.display=p?'flex':'none';if(p&&locked)document.exitPointerLock();if(!p&&!noLock)lock();if(p&&AU.ctx)AU.ctx.suspend();if(!p&&AU.ctx)AU.ctx.resume()}
 
@@ -663,7 +590,7 @@ function toggleFlash(){S.flash=!S.flash;if(S.world==='road'&&mode==='drive')S.he
 /* ============ CASA: HISTORIA Y OBJETOS ============ */
 const hx=x=>HO+x;
 function clue(k){if(S.clues[k])return;S.clues[k]=1;const n=['note','phone','mirror'].filter(x=>S.clues[x]).length;
- if(n>=3){S.canSleep=true;setObj('Ya es tarde y estás exhausto. Descansá en la cama del dormitorio (tocá ACCIÓN).')}else setObj('Revisá la casa antes de dormir. Pistas: '+n+'/3 (nota, teléfono, baño…)')}
+ if(n>=3){S.canSleep=true;setObj('Ya es tarde y estás exhausto. Descansá en la cama del dormitorio (E).')}else setObj('Revisá la casa antes de dormir. Pistas: '+n+'/3 (nota, teléfono, baño…)')}
 async function readNote(){mode='cine';const was=mode;await say('NOTA','«Si estás leyendo esto, no te quedes. Las noches de lluvia se oyen golpes dentro de las paredes. No duermas en el dormitorio y NUNCA mires debajo de la cama. Se lo dije al dueño y no me creyó. — M.»');mode='walk';clue('note');
  if(!S.silDone){S.silDone=true;await wait(5);windowGhost()}}
 async function usePhone(){mode='cine';AU.click();await say('PROTAGONISTA','Levanto el tubo. No hay tono, solo estática...');AU.whisper();await say('???','«...debajo...  ...debajo...»');await say('PROTAGONISTA','Cuelgo de golpe. Esa respiración no venía de la línea. Venía de algún lugar de la casa.');mode='walk';clue('phone')}
@@ -746,7 +673,7 @@ async function startHouse(fromIntro){
  await fadeIn(1.8);AU.door();
  await say('PROTAGONISTA','La llave estaba bajo la maceta, tal como me dijo. Adentro huele a humedad y a encierro.');
  await say('PROTAGONISTA','Hay una luz encendida en la sala. Mejor reviso la casa antes de dormir. Solo para quedarme tranquilo.');
- mode='walk';S.phase='explore';hud(true);setObj('Revisá la casa antes de dormir. Pistas: 0/3 (nota, teléfono, baño…)');toast('Tocá ACCIÓN para interactuar · LUZ enciende la linterna',5);
+ mode='walk';S.phase='explore';hud(true);setObj('Revisá la casa antes de dormir. Pistas: 0/3 (nota, teléfono, baño…)');toast('Usá E para interactuar · F enciende la linterna',5);
  ambientLoop();
  (async()=>{const e=epoch;await wait(38);if(e===epoch&&S.phase==='explore'){AU.ring();sub('(Suena el teléfono en la sala)',4)}})()}
 
@@ -777,7 +704,7 @@ async function bedScene(){
  shot(hx(-2.6),1.62,-3.9,BED.x,.5,-4.5,50,true);
  await wait(1.2);
  await say('PROTAGONISTA','¡Me soltó! ...¿Qué demonios fue eso? Algo me agarró desde abajo. Tengo que mirar.');
- P.x=hx(-2.7);P.z=-3.9;P.yaw=Math.PI/2;P.pitch=-.25;S.phase='underbed';mode='walk';hud(true);S.flash=true;setObj('Mirá debajo de la cama (tocá ACCIÓN).');AU.amb({drone:.2})}
+ P.x=hx(-2.7);P.z=-3.9;P.yaw=Math.PI/2;P.pitch=-.25;S.phase='underbed';mode='walk';hud(true);S.flash=true;setObj('Mirá debajo de la cama (E).');AU.amb({drone:.2})}
 
 /* ============ EL MONSTRUO SE LEVANTA ============ */
 async function riseScene(){
@@ -804,7 +731,7 @@ function prepChaseWorld(){resetState();setWorld('house');setHouseLights([1,1,0,0
  MON.tilt.rotation.set(0,0,0);MON.tilt.position.set(0,0,0);MON.g.position.set(hx(-3.5),0,-3.9);MON.g.rotation.y=Math.atan2(1.9,1.2);MON.g.visible=true;MON.mode='cine';S.clues={note:1,phone:1,mirror:1};S.canSleep=true;S.flash=true}
 function startChase(){resetFlow();prepChaseWorld();enterCine();hud(false);fadeNow(1);AU.amb({drone:.28,rain:.4,wind:.15});beginChase();fadeIn(1)}
 function beginChase(){S.phase='chase';setCP('chase');mode='walk';hud(true);S.flash=true;P.x=hx(-1.7);P.z=-3.6;P.yaw=Math.PI/2+.3;P.pitch=0;
- MON.mode='chase';MON.hold=1.1;MON.path=null;MON.rp=0;MON.g.visible=true;setObj('¡ESCAPÁ DE LA CASA! Corrí hasta el auto (empujá el joystick a fondo para correr).');AU.amb({drone:.3})}
+ MON.mode='chase';MON.hold=1.1;MON.path=null;MON.rp=0;MON.g.visible=true;setObj('¡ESCAPÁ DE LA CASA! Corrí hasta el auto (SHIFT para correr).');AU.amb({drone:.3})}
 function monChase(dt){const m=MON,mp=m.g.position;
  if(m.hold>0){m.hold-=dt;m.spd=0;faceTo(m,P.x,P.z,dt*5);return}
  let tx=P.x,tz=P.z;
@@ -818,7 +745,7 @@ async function caught(){if(S.dead)return;S.dead=true;AU.roar();shake(.8);fadeTo(
 function gameOver(txt,retry){S.over=true;S.retry=retry;$('overT').textContent=txt;$('sOver').style.display='flex';if(locked)document.exitPointerLock();hud(false)}
 
 /* ---- patio ---- */
-function escapeYard(){S.phase='yard';MON.mode='off';MON.g.visible=false;AU.roar();shake(.5);setObj('Subí al auto (tocá ACCIÓN).');S.ghostStep=0;AU.amb({drone:.2});H.front.locked=false;placeVehicles('yard')}
+function escapeYard(){S.phase='yard';MON.mode='off';MON.g.visible=false;AU.roar();shake(.5);setObj('Subí al auto (E).');S.ghostStep=0;AU.amb({drone:.2});H.front.locked=false;placeVehicles('yard')}
 function placeVehicles(w){if(w==='yard'){carP.position.set(hx(-5.5),0,13);carP.rotation.set(0,Math.PI,0);carP.visible=true;carP.updateMatrixWorld(true);COL.push(S.carCol=S.carCol||{x0:hx(-6.5),x1:hx(-4.5),z0:10.8,z1:15.2,on:true,door:false});seatIn(PR,carP,-.4,.2);PR.headG.visible=false;PR.aim=.75;PR.g.visible=true}}
 function updateYard(dt){if(S.phase!=='yard')return;const z=P.z;
  if(S.ghostStep===0&&z>9){S.ghostStep=1;ghost(hx(-13),9.5,Math.atan2(P.x-hx(-13),P.z-9.5),2.6,false);AU.sting();sub('(Algo se mueve entre los árboles)',3)}
@@ -847,12 +774,12 @@ async function carEscape(){
 /* ============ CONDUCCIÓN JUGABLE ============ */
 const DR={x:0,z:0,yaw:0,v:0,steer:0,ly:0,lp:0,shk:0};
 function startDrive(){resetFlow();resetState();setWorld('road');enterCine();setCP('drive');setClock('02:31');
- S.phase='drive';mode='drive';hud(true);setObj('Conducí hasta la comisaría. Seguí la ruta (joystick: girar y acelerar · botones ACEL y FRENO).');
+ S.phase='drive';mode='drive';hud(true);setObj('Conducí hasta la comisaría. Seguí la ruta (W acelerar · S frenar · A/D girar).');
  carP.visible=true;beamTo('car');S.heads=true;seatIn(PR,carP,-.4,.2);PR.headG.visible=false;PR.aim=.75;
  const p=roadPos(304,2);DR.x=p.x;DR.z=p.z;DR.yaw=-Math.atan(roadDX(304));DR.v=8;DR.steer=0;DR.ly=0;DR.lp=0;
- AU.amb({rain:.5,wind:.15,eng:.4,drone:.12});$('spd').style.display='block';fadeNow(1);fadeIn(1.2);toast('LUZ: faros · Deslizá el dedo para mirar dentro del auto',4)}
+ AU.amb({rain:.5,wind:.15,eng:.4,drone:.12});$('spd').style.display='block';fadeNow(1);fadeIn(1.2);toast('F: luces · Mouse: mirar dentro del auto',4)}
 function updateDrive(dt){const d=DR;
- if(!S.driveLocked){const thr=keys.KeyW||TJ.y<-.45,brk=keys.KeyS||TJ.y>.45,st=clamp((keys.KeyD?1:0)-(keys.KeyA?1:0)+TJ.x*1.4,-1,1);
+ if(!S.driveLocked){const thr=keys.KeyW,brk=keys.KeyS,st=(keys.KeyD?1:0)-(keys.KeyA?1:0);
   if(thr)d.v+=(d.v<0?20:9*(1-d.v/36))*dt;
   if(brk){if(d.v>0)d.v=Math.max(0,d.v-22*dt);else d.v=Math.max(-6,d.v-6*dt)}
   if(!thr&&!brk)d.v*=1-.22*dt;
@@ -884,7 +811,7 @@ async function arriveStation(){
 function startStation(){resetFlow();resetState();setWorld('station');enterCine();setCP('station');setClock('02:56');S.phase='station';
  AU.amb({rain:.12,wind:0,eng:0,drone:.04});
  place(GO,SO,-3.35,0);GO.sit=1;GO.read=.9;place(RI,SO+3,-3.9,Math.PI);RI.read=.6;
- P.x=SO;P.z=4.2;P.yaw=0;P.pitch=0;mode='walk';hud(true);S.flash=false;setObj('Hablá con el agente Gómez (acercate al escritorio y tocá ACCIÓN).');fadeNow(1);fadeIn(1.5);
+ P.x=SO;P.z=4.2;P.yaw=0;P.pitch=0;mode='walk';hud(true);S.flash=false;setObj('Hablá con el agente Gómez (acercate al escritorio y presioná E).');fadeNow(1);fadeIn(1.5);
  toast('Estás a salvo... por ahora.',4)}
 async function stationTalk(){
  S.phase='talk';enterCine();hud(false);place(PR,P.x,P.z,Math.PI);PR.sit=0;PR.g.visible=true;PR.headG.visible=true;
@@ -971,13 +898,13 @@ function beginFight(){
  LI.on=[1,0,0,0,0];LI.base[0]=.7;LT[0].color.setHex(0xff2a1a);LT[0].position.set(hx(-3.5),2.7,3.5);LI.fk=gt+1;amb.intensity=.32;
  MON.g.visible=true;MON.mode='fight';MON.hp=100;MON.dead=0;MON.tilt.rotation.set(0,0,0);MON.tilt.position.set(0,0,0);MON.g.position.set(hx(-5.5),0,1.7);MON.g.rotation.y=0;MON.next=2.5;MON.cd=1;MON.lunge=0;MON.windup=0;MON.roar=1;MON.hold=1.2;
  place(GO,hx(-3.9),4.7,0);place(RI,hx(-1.7),4.2,0);GO.aim=1;RI.aim=1;GO.cs=1.2;RI.cs=2;GO.fl.visible=RI.fl.visible=true;GO.gun.visible=RI.gun.visible=true;GO.crouch=0;
- P.x=hx(-3)+.2;P.z=5.1;P.yaw=0;P.pitch=-.05;GUN.visible=true;hud(true);setObj('¡Matá a la criatura! Tocá FUEGO para disparar · RECARGAR · munición limitada.');
+ P.x=hx(-3)+.2;P.z=5.1;P.yaw=0;P.pitch=-.05;GUN.visible=true;hud(true);setObj('¡Matá a la criatura! Clic: disparar · R: recargar · munición limitada.');
  AU.roar();shake(.5);AU.amb({drone:.4,rain:.3});hurtT=0}
 function fire(){if(!S.fight||S.reload>0||S.fireCd>0||S.dead||mode!=='walk'||dlg||S.over||paused)return;
- if(S.ammo<=0){AU.click();toast('Sin balas — tocá RECARGAR',1.5);return}
+ if(S.ammo<=0){AU.click();toast('Sin balas — R para recargar',1.5);return}
  S.ammo--;S.fireCd=.24;recoil=1;AU.shot();LT[4].position.copy(camera.position);LT[4].color.setHex(0xffb060);LI.base[4]=2.4;LI.on[4]=1;S.mz=.06;GUN.userData.f.visible=true;
  const o=camera.position.clone(),dir=new V3();camera.getWorldDirection(dir);
- const tests=[[1.35,.75*AIM,6],[2.3,.4*AIM,14]];let best=null;
+ const tests=[[1.35,.75,6],[2.3,.4,14]];let best=null;
  if(MON.g.visible&&MON.hp>0&&MON.dead===0){for(const t of tests){const c=new V3(MON.g.position.x,t[0],MON.g.position.z),oc=c.clone().sub(o),tt=oc.dot(dir);if(tt<0)continue;const d2=oc.lengthSq()-tt*tt;if(d2<=t[1]*t[1]){const hd=tt-Math.sqrt(t[1]*t[1]-d2);if(!best||hd<best.d)best={d:hd,dmg:t[2],head:t[2]>10}}}}
  if(best){const hp=o.clone().addScaledVector(dir,best.d);if(!wallBlocked(o.x,o.z,hp.x,hp.z)){hitMon(best.dmg,hp);return}}
  const wp=o.clone().addScaledVector(dir,12);spawnP(wp.x,wp.y,wp.z,3,1)}
@@ -1048,10 +975,9 @@ async function credits(){
 
 /* ============ ACTUALIZACIÓN POR MODO ============ */
 function updateWalk(dt){
- if(TC.fire&&S.fight)fire();
  const lockIn=dlg||S.over||S.dead;let mx=0,mz=0;
- if(!lockIn){const kb=keys.KeyW||keys.KeyS||keys.KeyA||keys.KeyD,f=clamp((keys.KeyW?1:0)-(keys.KeyS?1:0)-TJ.y,-1,1),r=clamp((keys.KeyD?1:0)-(keys.KeyA?1:0)+TJ.x,-1,1);
-  if(f||r){const l=Math.hypot(f,r),run=keys.ShiftLeft||keys.ShiftRight||TJ.mag>.88,sp=(run?5.4:3)*((!kb&&TJ.mag>0&&!run)?(.6+.4*TJ.mag):1);const fx=-Math.sin(P.yaw),fz=-Math.cos(P.yaw),rx=Math.cos(P.yaw),rz=-Math.sin(P.yaw);
+ if(!lockIn){const f=(keys.KeyW?1:0)-(keys.KeyS?1:0),r=(keys.KeyD?1:0)-(keys.KeyA?1:0);
+  if(f||r){const l=Math.hypot(f,r),run=keys.ShiftLeft||keys.ShiftRight,sp=(run?5.4:3);const fx=-Math.sin(P.yaw),fz=-Math.cos(P.yaw),rx=Math.cos(P.yaw),rz=-Math.sin(P.yaw);
    mx=(fx*f+rx*r)/l*sp*dt;mz=(fz*f+rz*r)/l*sp*dt;P.spd=sp}else P.spd=0}else P.spd=0;
  P.x+=mx;resolve(P,.35);P.z+=mz;resolve(P,.35);
  if(bounds){P.x=clamp(P.x,bounds.x0,bounds.x1);P.z=clamp(P.z,bounds.z0,bounds.z1)}
@@ -1059,7 +985,7 @@ function updateWalk(dt){
  const st=Math.sin(P.bob)>0?1:-1;if(P.spd>0&&st!==P.lst){P.lst=st;AU.step(P.spd>4)}
  camera.rotation.order='YXZ';camera.up.set(0,1,0);camera.position.set(P.x,1.65+b-(GO.crouch*0),P.z);camera.rotation.set(P.pitch,P.yaw,0);
  if(S.phase==='chase'&&P.z>6.8&&P.x>HO-9&&P.x<HO+9&&!S.dead){escapeYard()}
- const a=(!lockIn&&mode==='walk')?nearestIA():null;curIA=a;const pe=$('prompt');if(a){pe.style.display='block';pe.textContent=(IS_TOUCH?'☝ ':'[E] ')+a.label()}else pe.style.display='none';
+ const a=(!lockIn&&mode==='walk')?nearestIA():null;curIA=a;const pe=$('prompt');if(a){pe.style.display='block';pe.textContent='[E] '+a.label()}else pe.style.display='none';
  if(S.fight){recoil=Math.max(0,recoil-dt*7);GUN.position.set(.22,-.2+(S.reload>0?-.15:0),-.45+recoil*.07);GUN.rotation.x=recoil*.25+(S.reload>0?.8:0)}}
 function updateMonster(dt){const m=MON;
  if(m.mode==='chase')monChase(dt);
@@ -1100,14 +1026,14 @@ function update(dt){
  frame++;if(frame%3===0)grain()}
 function menuLoop(dt){menuT+=dt;gt+=dt;camera.position.set(Math.sin(menuT*.1)*2,1.7,12);camera.rotation.order='YXZ';camera.rotation.set(.05,Math.sin(menuT*.13)*.25+.2,0);beam.intensity=0;updRain(dt);updLights();$('stamp').innerHTML='PLAY ▶<br>14 OCT 1995  23:47';if(frame++%3===0)grain()}
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05);
- if(inMenu)menuLoop(dt);else if(!paused)update(dt);updTouchUI();
+ if(inMenu)menuLoop(dt);else if(!paused)update(dt);
  renderer.render(scene,camera)}
 
 /* ============ MENÚS ============ */
 function showOnly(id){['sMenu','sOpt','sPause','sCred'].forEach(s=>$(s).style.display='none');if(id)$(id).style.display='flex'}
 function toMenu(){resetFlow();inMenu=true;paused=true;mode='menu';S.over=false;if(locked)document.exitPointerLock();hud(false);$('sOver').style.display='none';$('sEnd').style.display='none';$('credits').style.display='none';$('spd').style.display='none';$('qte').style.display='none';
  fadeNow(0);setWorld('road');camera.up.set(0,1,0);for(const c of[carP,carC])c.visible=false;showOnly('sMenu');$('bCont').classList.toggle('dis',!ls('emdm_cp'));AU.amb({rain:.25,wind:.1,drone:.06,eng:0})}
-function begin(cp){enterFS();AU.init();showOnly(null);inMenu=false;paused=false;resetFlow();lock();
+function begin(cp){AU.init();showOnly(null);inMenu=false;paused=false;resetFlow();lock();
  const f={intro:playIntro,house:startHouse,chase:startChase,drive:startDrive,station:startStation,ride:startRide,return2:startReturn,fight:startFight}[cp]||playIntro;f()}
 $('bNew').onclick=()=>{ls('emdm_cp','');begin('intro')};
 $('bCont').onclick=()=>{begin(ls('emdm_cp')||'intro')};
@@ -1126,64 +1052,6 @@ $('bRetry').onclick=()=>{$('sOver').style.display='none';const r=S.retry;S.over=
 $('bOverMenu').onclick=()=>toMenu();
 $('bAgain').onclick=()=>{$('sEnd').style.display='none';ls('emdm_cp','');begin('intro')};
 $('bMenuEnd').onclick=()=>toMenu();
-
-/* ============ CONTROLES TÁCTILES ============ */
-const TJ={x:0,y:0,mag:0},TC={fire:false},TP={joy:null,look:null},_ds={};
-function jbPlace(x,y,on){const b=$('jb');b.style.left=x+'px';b.style.top=y+'px';b.style.opacity=on?.7:.35}
-function jbIdle(){jbPlace(Math.max(95,innerWidth*.12),innerHeight-100,false);$('jk').style.transform='translate(0,0)'}
-function resetTouch(){TJ.x=TJ.y=TJ.mag=0;TC.fire=false;TP.joy=null;TP.look=null;keys.KeyW=false;keys.KeyS=false;jbIdle();document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'))}
-function showEl(id,v,disp){const e=$(id),s=v?(disp||'flex'):'none';if(_ds[id]!==s){_ds[id]=s;e.style.display=s}}
-function updTouchUI(){
- if(!IS_TOUCH)return;
- const play=!inMenu&&!paused&&!S.over,w=mode==='walk',d=mode==='drive';
- showEl('tz',play,'block');showEl('tc',play,'block');showEl('jb',play&&(w||d),'block');
- showEl('tbE',play&&(w||!!S.qte));showEl('tbF',play&&(w||d));showEl('tbR',play&&w&&S.fight);showEl('tbFire',play&&w&&S.fight);
- showEl('tbGas',play&&d);showEl('tbBrk',play&&d);showEl('tbPause',play);
- $('tbE').classList.toggle('act',!!(S.qte||curIA));
- if(!play&&(TP.joy||TP.look||TC.fire))resetTouch()}
-function enterFS(){if(!IS_TOUCH)return;
- try{const el=document.documentElement,rq=el.requestFullscreen||el.webkitRequestFullscreen;if(rq&&!document.fullscreenElement&&!document.webkitFullscreenElement){const p=rq.call(el);if(p&&p.catch)p.catch(()=>{})}}catch(e){}
- try{if(screen.orientation&&screen.orientation.lock){const p=screen.orientation.lock('landscape');if(p&&p.catch)p.catch(()=>{})}}catch(e){}
- try{if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}}
-(function(){
- if(!IS_TOUCH)return;
- const tz=$('tz');
- tz.addEventListener('pointerdown',e=>{
-  e.preventDefault();
-  if(S.qte){qtePress();return}
-  if(paused||inMenu)return;
-  const walkish=(mode==='walk'||mode==='drive');
-  if(walkish&&!TP.joy&&e.clientX<innerWidth*.42){TP.joy={id:e.pointerId,x:e.clientX,y:e.clientY};jbPlace(e.clientX,e.clientY,true);try{tz.setPointerCapture(e.pointerId)}catch(_){}}
-  else if(!TP.look){TP.look={id:e.pointerId,x:e.clientX,y:e.clientY,sx:e.clientX,sy:e.clientY,t:performance.now()};try{tz.setPointerCapture(e.pointerId)}catch(_){}}});
- tz.addEventListener('pointermove',e=>{
-  e.preventDefault();const j=TP.joy,l=TP.look;
-  if(j&&e.pointerId===j.id){let dx=e.clientX-j.x,dy=e.clientY-j.y;const dd=Math.hypot(dx,dy),R=55;if(dd>R){dx*=R/dd;dy*=R/dd}
-   $('jk').style.transform='translate('+dx+'px,'+dy+'px)';const m=Math.hypot(dx,dy)/R;if(m<.14){TJ.x=TJ.y=TJ.mag=0}else{TJ.x=dx/R;TJ.y=dy/R;TJ.mag=m}}
-  else if(l&&e.pointerId===l.id){const dx=e.clientX-l.x,dy=e.clientY-l.y;l.x=e.clientX;l.y=e.clientY;
-   if(paused||inMenu||dlg)return;const k=.0048*opt.sens;
-   if(mode==='walk'){P.yaw-=dx*k;P.pitch=clamp(P.pitch-dy*k,-1.45,1.45)}
-   else if(mode==='drive'){DR.ly=clamp(DR.ly-dx*k,-1.8,1.8);DR.lp=clamp(DR.lp-dy*k,-.6,.6)}}});
- const up=e=>{const j=TP.joy,l=TP.look;
-  if(j&&e.pointerId===j.id){TP.joy=null;TJ.x=TJ.y=TJ.mag=0;jbIdle()}
-  else if(l&&e.pointerId===l.id){TP.look=null;
-   if(e.type==='pointerup'&&Math.hypot(e.clientX-l.sx,e.clientY-l.sy)<14&&performance.now()-l.t<400){if(dlg)advanceDlg();else if(skipFn)skipFn()}}};
- tz.addEventListener('pointerup',up);tz.addEventListener('pointercancel',up);
- function bind(id,down,upf){const b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();b.classList.add('on');down&&down()});const r=()=>{b.classList.remove('on');upf&&upf()};b.addEventListener('pointerup',r);b.addEventListener('pointercancel',r)}
- bind('tbE',()=>{if(S.qte)qtePress();else if(mode==='walk'&&!dlg)tryInteract()});
- bind('tbF',()=>{if(mode==='walk'||mode==='drive')toggleFlash()});
- bind('tbR',()=>reload());
- bind('tbFire',()=>{TC.fire=true;fire()},()=>{TC.fire=false});
- bind('tbGas',()=>{keys.KeyW=true},()=>{keys.KeyW=false});
- bind('tbBrk',()=>{keys.KeyS=true},()=>{keys.KeyS=false});
- bind('tbPause',()=>setPause(true));
- $('prompt').addEventListener('pointerdown',e=>{e.preventDefault();if(mode==='walk'&&!dlg)tryInteract()});
- $('dlg').addEventListener('pointerdown',e=>{e.preventDefault();advanceDlg()});
- document.addEventListener('visibilitychange',()=>{if(document.hidden&&!inMenu&&!paused&&!S.over)setPause(true)});
- document.addEventListener('gesturestart',e=>e.preventDefault());
- addEventListener('contextmenu',e=>e.preventDefault());
- addEventListener('resize',jbIdle);addEventListener('orientationchange',()=>setTimeout(jbIdle,300));
- jbIdle();
-})();
 
 /* ============ ARRANQUE ============ */
 $('rVol').value=opt.vol;$('rSens').value=opt.sens;$('sQual').value=String(opt.q);
